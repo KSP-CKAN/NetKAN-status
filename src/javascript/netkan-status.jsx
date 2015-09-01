@@ -18,7 +18,10 @@ var NetKANs = React.createClass({
     });
   },
   getInitialState: function() {
-    return {data: []};
+    return {
+      data: [],
+      filterText: ''
+    };
   },
   componentDidMount: function() {
     this.loadNetKANsFromServer();
@@ -32,8 +35,9 @@ var NetKANs = React.createClass({
           <thead>
             <th>NetKAN</th>
             <th>Last Checked</th>
+            <th>Last Inflated</th>
             <th>Last Indexed</th>
-            <th>Error</th>
+            <th>Last Error</th>
           </thead>
           <NetKANList data={this.state.data} />
         </table>
@@ -42,14 +46,23 @@ var NetKANs = React.createClass({
   }
 });
 
+var dateNull = function(date) {
+  if ( ! date ) {
+    return "N/A";
+  } else {
+    return moment(date).fromNow();
+  }
+}
+
 var NetKANList = React.createClass({
   render: function() {
     var netkanNodes = this.props.data.map(function (netkan) {
       return (
         <tr>
           <td>{netkan.id}</td>
-          <td>{netkan.last_checked}</td>
-          <td>{netkan.last_indexed}</td>
+          <td>{dateNull(netkan.last_checked)}</td>
+          <td>{dateNull(netkan.last_inflated)}</td>
+          <td>{dateNull(netkan.last_indexed)}</td>
           <td>{netkan.last_error}</td>
         </tr>
       );
