@@ -39,7 +39,10 @@ var NetKANs = React.createClass({
             <th>Last Indexed</th>
             <th>Last Error</th>
           </thead>
-          <NetKANList data={this.state.data} />
+          <NetKANList 
+            data={this.state.data}
+            filterText={this.state.filterText.toLowerCase()}
+          />
         </table>
       </div>
     );
@@ -54,10 +57,26 @@ var dateNull = function(date) {
   }
 }
 
+function dynamicSort(property) {
+  var sortOrder = 1;
+  if(property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function (a,b) {
+    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+    return result * sortOrder;
+  }
+}
+
 var NetKANList = React.createClass({
   render: function() {
-    var netkanNodes = this.props.data.map(function (netkan) {
-      return (
+    var netkanNodes = [];
+    this.props.data.sort(dynamicSort("id")).map(function (netkan) {
+      if (this.props.filterText && netkan.id.toLowerCase().indexOf(this.props.filterText) === -1) {
+        return;
+      }
+      netkanNodes.push(
         <tr>
           <td>{netkan.id}</td>
           <td>{dateNull(netkan.last_checked)}</td>
@@ -66,7 +85,7 @@ var NetKANList = React.createClass({
           <td>{netkan.last_error}</td>
         </tr>
       );
-    });
+    }.bind(this));
     return (
       <tbody>
         {netkanNodes}
