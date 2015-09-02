@@ -1,6 +1,19 @@
 var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
 
+var renderDate = function(date) {
+  if ( ! date ) {
+    return "N/A";
+  } else {
+    return moment(date).fromNow();
+  }
+}
+
+var SortTypes = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+};
+
 var NetKANs = React.createClass({
   loadNetKANsFromServer: function() {
     $.ajax({
@@ -14,117 +27,198 @@ var NetKANs = React.createClass({
           return item;
         });
         this.setState({data: netkan});
+        this._onDataLoad();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
   },
+
   getInitialState: function() {
     return {
       data: [],
-      filterText: ''
+      filterText: '',
+      tableWidth: '200',
+      tableHeight: '500',
+      filteredRows: [],
+      filterBy: 'failed',
+      filterId: null,
+      sortBy: 'id',
+      sortDir: null
     };
   },
+
   componentDidMount: function() {
     this.loadNetKANsFromServer();
+    this._update();
+    var win = window;
+    if (win.addEventListener) {
+      win.addEventListener('resize', this._onResize, false);
+    } else if (win.attachEvent) {
+      win.attachEvent('onresize', this._onResize);
+    } else {
+      win.onresize = this._onResize;
+    }
+    
     setInterval(this.loadNetKANsFromServer, this.props.pollInterval);
   },
-  _rowGetter(index){
-    return this.state.data.getObjectAt(index);
+
+  _onDataLoad() {
+    this._filterRowsBy(this.state.filterId);
+    this._sortRowsBy(this.state.sortBy);
   },
-  render: function() {
+
+  _onResize() {
+    clearTimeout(this._updateTimer);
+    this._updateTimer = setTimeout(this._update, 16);
+  },
+
+  _update() {
+    var win = window;
+
+    var widthOffset = win.innerWidth < 680 ? 0 : 240;
+
+    this.setState({
+      renderPage: true,
+      tableWidth: win.innerWidth - widthOffset,
+      tableHeight: win.innerHeight - 200,
+    });
+  },
+
+  _sortRowsBy(cellDataKey) {
+    var sortDir = this.state.sortDir;
+    var sortBy = cellDataKey;
+    if (sortBy === this.state.sortBy) {
+      sortDir = this.state.sortDir === SortTypes.ASC ? SortTypes.DESC : SortTypes.ASC;
+    } else {
+      sortDir = SortTypes.DESC;
+    }
+    
+    var filteredRows = this.state.filteredRows.slice();
+    filteredRows.sort((a, b) => {
+      var sortVal = 0;
+      if (a[sortBy] > b[sortBy]) {
+        sortVal = 1;
+      }
+      if (a[sortBy] < b[sortBy]) {
+        sortVal = -1;
+      }
+      
+      if (sortDir === SortTypes.DESC) {
+        sortVal = sortVal * -1;
+      }
+      
+      return sortVal;
+    });
+    
+    this.setState({
+      filteredRows,
+      sortBy,
+      sortDir,
+    });
+  },
+
+  _filterRowsBy(filterId) {
+    var data = this.state.data.slice();
+    
+    var filteredRows = filterId ? data.filter(function(row){
+      return row['id'].toLowerCase().indexOf(filterId.toLowerCase()) >= 0
+    }) : data;
+
+    this.setState({
+      filteredRows,
+      filterId,
+    })
+  },
+
+  _onFilterChange(e) {
+    this._filterRowsBy(e.target.value);
+  },
+
+  _renderHeader(label, cellDataKey) {
+    return (
+      <a onClick={this._sortRowsBy.bind(null, cellDataKey)}>{label}</a>
+    );
+  },
+
+  _rowGetter(index){
+    return this.state.filteredRows[index];
+  },
+
+  render() {
+    var controlledScrolling =
+          this.props.left !== undefined || this.props.top !== undefined;
+    
+    var sortDirArrow = '';
+    
+    if (this.state.sortDir !== null){
+      sortDirArrow = this.state.sortDir === SortTypes.DESC ? ' ↓' : ' ↑';
+    }    
+
     return (
       <div>
         <h1>NetKANs Indexed</h1>
-        <NetKANTable />    
+        <input onChange={this._onFilterChange} placeholder='Filter by NetKAN' />
+        <Table
+          rowHeight={50}
+          headerHeight={50}
+          rowGetter={this._rowGetter}
+          rowsCount={this.state.filteredRows.length}
+          width={this.state.tableWidth}
+          height={this.state.tableHeight}
+          onContentHeightChange={this._onContentHeightChange}
+          scrollTop={this.props.top}
+          scrollLeft={this.props.left}
+          overflowX={controlledScrolling ? "hidden" : "auto"}
+          overflowY={controlledScrolling ? "hidden" : "auto"}>
+          <Column
+            headerRenderer={this._renderHeader}
+            dataKey="id"
+            fixed={true}
+            label={"NetKAN" + (this.state.sortBy === 'id' ? sortDirArrow : '')}
+            width={200}
+            flexGrow={4}
+          />
+          <Column
+            headerRenderer={this._renderHeader}
+            cellRenderer={renderDate}
+            dataKey="last_checked"
+            fixed={true}
+            label={"Last Checked" + (this.state.sortBy === 'last_checked' ? sortDirArrow : '')}
+            width={100}
+            flexGrow={1}
+          />
+          <Column
+            headerRenderer={this._renderHeader}
+            cellRenderer={renderDate}
+            dataKey="last_inflated"
+            fixed={true}
+            label={"Last Inflated" + (this.state.sortBy === 'last_inflated' ? sortDirArrow : '')}
+            width={100}
+            flexGrow={1}
+          />
+          <Column
+            headerRenderer={this._renderHeader}
+            cellRenderer={renderDate}
+            dataKey="last_indexed"
+            fixed={true}
+            label={"Last Indexed" + (this.state.sortBy === 'last_indexed' ? sortDirArrow : '')}
+            width={100}
+            flexGrow={1}
+          />
+          <Column
+            dataKey="last_error"
+            fixed={true}
+            label="Last Error"
+            width={200}
+            flexGrow={1}
+          />
+        </Table>
       </div>
     );
   }
 });
-
-var NetKANTable = React.createClass({
-  render: function() {
-    console.log(this.state);
-    return (
-      <Table
-        rowHeight={50}
-        headerHeight={50}
-        rowGetter={this._rowGetter}
-        rowsCount={this.state.data.getSize()}
-        width={this.props.tableWidth}
-        height={this.props.tableHeight}
-        onContentHeightChange={this._onContentHeightChange}
-        scrollTop={this.props.top}
-        scrollLeft={this.props.left}
-        overflowX={controlledScrolling ? "hidden" : "auto"}
-        overflowY={controlledScrolling ? "hidden" : "auto"}>
-        <Column
-          dataKey="id"
-          fixed={true}
-          label="NetKAN"
-          width={100}
-        />
-        <Column
-          dataKey="last_checked"
-          fixed={true}
-          label="Last Checked"
-          width={100}
-        />
-      </Table>
-    );
-  }
-});
-
-
-var dateNull = function(date) {
-  if ( ! date ) {
-    return "N/A";
-  } else {
-    return moment(date).fromNow();
-  }
-}
-
-function dynamicSort(property) {
-  var sortOrder = 1;
-  if(property[0] === "-") {
-    sortOrder = -1;
-    property = property.substr(1);
-  }
-  return function (a,b) {
-    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-    return result * sortOrder;
-  }
-}
-
-var netkanIdFilter = function(filter, netkanId) {
-  return filter && netkanId.toLowerCase().indexOf(filter) === -1
-}
-
-var NetKANList = React.createClass({
-  render: function() {
-    var netkanNodes = this.props.data.sort(dynamicSort("id"))
-      .map(function(netkan) {
-        if (netkanIdFilter(this.props.filterText, netkan.id)) {
-          return null;
-        }
-        return (
-          <tr>
-            <td>{netkan.id}</td>
-            <td>{dateNull(netkan.last_checked)}</td>
-            <td>{dateNull(netkan.last_inflated)}</td>
-            <td>{dateNull(netkan.last_indexed)}</td>
-            <td>{netkan.last_error}</td>
-          </tr>
-        );
-    }.bind(this));
-    return (
-      <tbody>
-        {netkanNodes}
-      </tbody>
-    );
-  }
-}); 
 
 React.render(
   <NetKANs url="https://dl.dropboxusercontent.com/u/8415802/status/netkan.json" pollInterval={300000} />,
