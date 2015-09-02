@@ -1,3 +1,6 @@
+var Table = FixedDataTable.Table;
+var Column = FixedDataTable.Column;
+
 var NetKANs = React.createClass({
   loadNetKANsFromServer: function() {
     $.ajax({
@@ -27,27 +30,52 @@ var NetKANs = React.createClass({
     this.loadNetKANsFromServer();
     setInterval(this.loadNetKANsFromServer, this.props.pollInterval);
   },
+  _rowGetter(index){
+    return this.state.data.getObjectAt(index);
+  },
   render: function() {
     return (
       <div>
         <h1>NetKANs Indexed</h1>
-          <table className="table table-striped">
-          <thead>
-            <th>NetKAN</th>
-            <th>Last Checked</th>
-            <th>Last Inflated</th>
-            <th>Last Indexed</th>
-            <th>Last Error</th>
-          </thead>
-          <NetKANList 
-            data={this.state.data}
-            filterText={this.state.filterText.toLowerCase()}
-          />
-        </table>
+        <NetKANTable />    
       </div>
     );
   }
 });
+
+var NetKANTable = React.createClass({
+  render: function() {
+    console.log(this.state);
+    return (
+      <Table
+        rowHeight={50}
+        headerHeight={50}
+        rowGetter={this._rowGetter}
+        rowsCount={this.state.data.getSize()}
+        width={this.props.tableWidth}
+        height={this.props.tableHeight}
+        onContentHeightChange={this._onContentHeightChange}
+        scrollTop={this.props.top}
+        scrollLeft={this.props.left}
+        overflowX={controlledScrolling ? "hidden" : "auto"}
+        overflowY={controlledScrolling ? "hidden" : "auto"}>
+        <Column
+          dataKey="id"
+          fixed={true}
+          label="NetKAN"
+          width={100}
+        />
+        <Column
+          dataKey="last_checked"
+          fixed={true}
+          label="Last Checked"
+          width={100}
+        />
+      </Table>
+    );
+  }
+});
+
 
 var dateNull = function(date) {
   if ( ! date ) {
@@ -69,22 +97,26 @@ function dynamicSort(property) {
   }
 }
 
+var netkanIdFilter = function(filter, netkanId) {
+  return filter && netkanId.toLowerCase().indexOf(filter) === -1
+}
+
 var NetKANList = React.createClass({
   render: function() {
-    var netkanNodes = [];
-    this.props.data.sort(dynamicSort("id")).map(function (netkan) {
-      if (this.props.filterText && netkan.id.toLowerCase().indexOf(this.props.filterText) === -1) {
-        return;
-      }
-      netkanNodes.push(
-        <tr>
-          <td>{netkan.id}</td>
-          <td>{dateNull(netkan.last_checked)}</td>
-          <td>{dateNull(netkan.last_inflated)}</td>
-          <td>{dateNull(netkan.last_indexed)}</td>
-          <td>{netkan.last_error}</td>
-        </tr>
-      );
+    var netkanNodes = this.props.data.sort(dynamicSort("id"))
+      .map(function(netkan) {
+        if (netkanIdFilter(this.props.filterText, netkan.id)) {
+          return null;
+        }
+        return (
+          <tr>
+            <td>{netkan.id}</td>
+            <td>{dateNull(netkan.last_checked)}</td>
+            <td>{dateNull(netkan.last_inflated)}</td>
+            <td>{dateNull(netkan.last_indexed)}</td>
+            <td>{netkan.last_error}</td>
+          </tr>
+        );
     }.bind(this));
     return (
       <tbody>
