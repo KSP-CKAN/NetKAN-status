@@ -26,6 +26,7 @@ module.exports = {
     // new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
     new HtmlWebpackPlugin({
+      favicon: './src/favicon.ico',
       title: 'NetKAN Status'
     }),
     new webpack.optimize.UglifyJsPlugin({
