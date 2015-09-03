@@ -94,10 +94,15 @@ export default class NetKANs extends React.Component {
 
     rows.sort((a, b) => {
       let sortVal = 0;
-      if (a[sortBy].toLowerCase() > b[sortBy].toLowerCase()) {
+      a = a[sortBy] ?
+        a[sortBy].toLowerCase() : '';
+      b = b[sortBy] ?
+        b[sortBy].toLowerCase() : '';
+
+      if (a > b) {
         sortVal = 1;
       }
-      if (a[sortBy].toLowerCase() < b[sortBy].toLowerCase()) {
+      if (a < b) {
         sortVal = -1;
       }
       return sortDir === 'DESC' ?
