@@ -166,9 +166,10 @@ export default class NetKANs extends React.Component {
             flexGrow={1}
           />
           <Column
+            headerRenderer={this._renderHeader.bind(this)}
             dataKey="last_error"
             fixed={true}
-            label="Last Error"
+            label={'Last Error' + sortDirArrow('last_error')}
             width={200}
             flexGrow={1}
           />
