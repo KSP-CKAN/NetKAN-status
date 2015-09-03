@@ -14,6 +14,17 @@ var SortTypes = {
   DESC: 'DESC',
 };
 
+var sortById = function(sortDir) {
+  var sortOrder = 1;
+  if (sortDir === SortTypes.DESC) {
+    sortOrder = -1;
+  }
+  return function (a,b) {
+    var result = (a['id'].toLowerCase() < b['id'].toLowerCase()) ? -1 : (a['id'].toLowerCase() > b['id'].toLowerCase()) ? 1 : 0;
+    return result * sortOrder;
+  }
+}
+
 var NetKANs = React.createClass({
   loadNetKANsFromServer: function() {
     $.ajax({
@@ -96,21 +107,7 @@ var NetKANs = React.createClass({
     }
     
     var filteredRows = this.state.filteredRows.slice();
-    filteredRows.sort((a, b) => {
-      var sortVal = 0;
-      if (a[sortBy] > b[sortBy]) {
-        sortVal = 1;
-      }
-      if (a[sortBy] < b[sortBy]) {
-        sortVal = -1;
-      }
-      
-      if (sortDir === SortTypes.DESC) {
-        sortVal = sortVal * -1;
-      }
-      
-      return sortVal;
-    });
+    filteredRows.sort(sortById(sortDir));
     
     this.setState({
       filteredRows,
