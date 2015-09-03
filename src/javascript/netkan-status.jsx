@@ -20,8 +20,21 @@ var sortById = function(sortDir) {
     sortOrder = -1;
   }
   return function (a,b) {
-    var result = (a['id'].toLowerCase() < b['id'].toLowerCase()) ? -1 : (a['id'].toLowerCase() > b['id'].toLowerCase()) ? 1 : 0;
+    var result = (a['id'].toLowerCase() < b['id'].toLowerCase()) ? 1 : (a['id'].toLowerCase() > b['id'].toLowerCase()) ? -1 : 0;
     return result * sortOrder;
+  }
+}
+
+var sortByDate = function(sortDir,property) {
+  var sortOrder = 1;
+  if (sortDir === SortTypes.DESC) {
+    sortOrder = -1;
+  }
+  return function (a,b) {
+    var date1 = new Date(a[property]);
+    var date2 = new Date(b[property]);
+    var result = (date1 < date2) ? 1 : (date1 > date2) ? -1 : 0;
+     return result * sortOrder;
   }
 }
 
