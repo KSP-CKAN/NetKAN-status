@@ -19,8 +19,8 @@ export default class NetKANs extends React.Component {
       tableHeight: 500,
       filterBy: 'failed',
       filterId: null,
-      sortBy: 'id',
-      sortDir: 'ASC'
+      sortBy: 'last_error',
+      sortDir: 'DESC'
     }
 
     if (window.addEventListener) {
@@ -66,10 +66,10 @@ export default class NetKANs extends React.Component {
     this._updateTimer = setTimeout(this._updateTableSize, 16);
   }
   _updateTableSize() {
-    const widthOffset = window.innerWidth < 680 ? 0 : 240;
+    const widthOffset = window.innerWidth < 680 ? 0 : 20;
     this.setState({
       tableWidth: window.innerWidth - widthOffset,
-      tableHeight: window.innerHeight - 200,
+      tableHeight: window.innerHeight - 50,
     });
   }
   _onFilterChange(e) {
@@ -88,8 +88,9 @@ export default class NetKANs extends React.Component {
 
     const rows = this.state.filterId ?
       this.state.data.filter((row) => {
-        return row['id'].toLowerCase()
-          .indexOf(this.state.filterId.toLowerCase()) !== -1
+          var filt = this.state.filterId.toLowerCase();
+        return (row['id'].toLowerCase().indexOf(filt) !== -1)
+          || (row['last_error'] && row['last_error'].toLowerCase().indexOf(filt) !== -1);
       }) : this.state.data;
 
     rows.sort((a, b) => {
@@ -114,16 +115,36 @@ export default class NetKANs extends React.Component {
         return ''
       }
       return this.state.sortDir === 'DESC' ?
-        ' ↓' : ' ↑'
+        ' ▾' : ' ▴'
+    };
+
+    const divstyle = {
+      fontSize: '9pt'
+    };
+    const h1style = {
+      color:              '#333',
+      fontSize:           '16pt',
+      margin:             '5px 0',
+      paddingLeft:        '72px',
+      backgroundImage:    'url(favicon.ico)',
+      backgroundPosition: 'left center',
+      backgroundRepeat:   'no-repeat'
+    };
+    const inputstyle = {
+      float:    'right',
+      margin:   '1px 5px',
+      width:    '20em',
+      fontSize: '11pt',
+      padding:  '1px 3px'
     };
 
     return (
-      <div>
-        <h1>NetKANs Indexed</h1>
-        <input onChange={this._onFilterChange} placeholder='Filter by NetKAN' />
+      <div style={divstyle}>
+        <input onChange={this._onFilterChange} placeholder='filter...' style={inputstyle} autoFocus='true' type='search' />
+        <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
-          rowHeight={50}
-          headerHeight={50}
+          rowHeight={40}
+          headerHeight={30}
           rowGetter={index => rows[index]}
           rowsCount={rows.length}
           width={this.state.tableWidth}
@@ -136,7 +157,7 @@ export default class NetKANs extends React.Component {
             fixed={true}
             label={'NetKAN' + sortDirArrow('id')}
             width={200}
-            flexGrow={4}
+            flexGrow={1}
           />
           <Column
             headerRenderer={this._renderHeader.bind(this)}
@@ -144,8 +165,8 @@ export default class NetKANs extends React.Component {
             dataKey="last_checked"
             fixed={true}
             label={'Last Checked' + sortDirArrow('last_checked')}
-            width={100}
-            flexGrow={1}
+            width={120}
+            flexGrow={0}
           />
           <Column
             headerRenderer={this._renderHeader.bind(this)}
@@ -153,8 +174,8 @@ export default class NetKANs extends React.Component {
             dataKey="last_inflated"
             fixed={true}
             label={'Last Inflated' + sortDirArrow('last_inflated')}
-            width={100}
-            flexGrow={1}
+            width={120}
+            flexGrow={0}
           />
           <Column
             headerRenderer={this._renderHeader.bind(this)}
@@ -162,16 +183,16 @@ export default class NetKANs extends React.Component {
             dataKey="last_indexed"
             fixed={true}
             label={'Last Indexed' + sortDirArrow('last_indexed')}
-            width={100}
-            flexGrow={1}
+            width={120}
+            flexGrow={0}
           />
           <Column
             headerRenderer={this._renderHeader.bind(this)}
             dataKey="last_error"
-            fixed={true}
+            fixed={false}
             label={'Last Error' + sortDirArrow('last_error')}
             width={200}
-            flexGrow={1}
+            flexGrow={4}
           />
         </Table>
       </div>
