@@ -6,7 +6,7 @@ import datatableStyles from
 
 var sheet = document.createElement('style');
 sheet.type = 'text/css';
-sheet.innerHTML = 'html,body{background-color:#f0f0f0;} input::-webkit-input-placeholder{font-style:italic;}';
+sheet.innerHTML = 'html,body{background-color:#f0f0f0;} input::-webkit-input-placeholder{font-style:italic;} a:link,a:visited{text-decoration:none;color:#009;} a:hover,a:active{text-decoration:underline;}';
 document.body.appendChild(sheet);
 
 document.body.innerHTML += '<div id="content"></div>';

@@ -153,6 +153,7 @@ export default class NetKANs extends React.Component {
           overflowY="auto">
           <Column
             headerRenderer={this._renderHeader.bind(this)}
+            cellRenderer={id => <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + id + ".netkan"}>{id}</a>}
             dataKey="id"
             fixed={true}
             label={'NetKAN' + sortDirArrow('id')}
