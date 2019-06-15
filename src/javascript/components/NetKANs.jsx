@@ -30,8 +30,8 @@ export default class NetKANs extends React.Component {
     } else {
       window.onresize = this._onResize;
     }
-    this.loadNetKANsFromServer();
     setInterval(this.loadNetKANsFromServer, this.props.pollInterval);
+    this.loadNetKANsFromServer();
   }
   loadNetKANsFromServer() {
     $.ajax({
@@ -40,7 +40,7 @@ export default class NetKANs extends React.Component {
       cache: 'false',
       success: (data) => {
         const netkan = Object.keys(data).map((key) => {
-          const item = data[key];
+          const item = data[key] ? data[key] : {};
           item.id = key;
           return item;
         });
