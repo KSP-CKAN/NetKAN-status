@@ -13,7 +13,7 @@ document.body.innerHTML += '<div id="content"></div>';
 
 ReactDom.render(
   <NetKANs
-    url="http://status.ksp-ckan.org/status/netkan.json"
+    url="http://status.ksp-ckan.space/status/netkan.json"
     pollInterval={300000} />,
   document.getElementById('content')
 );
