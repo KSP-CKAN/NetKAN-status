@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Column} from 'fixed-data-table';
+import {Table, Column, Cell} from 'fixed-data-table';
 import $ from 'jquery';
 
 import renderDate from '../lib/renderDate.js';
@@ -77,10 +77,14 @@ export default class NetKANs extends React.Component {
       filterId: e.target.value
     });
   }
-  _renderHeader(label, cellDataKey) {
-    return (
-      <a onClick={this._updateSort.bind(null, cellDataKey)}>{label}</a>
-    );
+  _sortDirArrow(key) {
+    if (key !== this.state.sortBy) {
+        return '';
+    }
+    return this.state.sortDir === 'DESC' ? ' ▾' : ' ▴';
+  }
+  _header(key, name) {
+      return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
   }
   render() {
     const sortBy = this.state.sortBy;
@@ -110,19 +114,12 @@ export default class NetKANs extends React.Component {
         sortVal * -1 : sortVal;
     });
 
-    const sortDirArrow = (key) => {
-      if (key !== this.state.sortBy) {
-        return ''
-      }
-      return this.state.sortDir === 'DESC' ?
-        ' ▾' : ' ▴'
-    };
 
     const divstyle = {
       fontSize: '9pt'
     };
     const h1style = {
-      color:              '#333',
+      color:              'rgb(240, 240, 240)',
       fontSize:           '16pt',
       margin:             '5px 0',
       paddingLeft:        '72px',
@@ -135,7 +132,10 @@ export default class NetKANs extends React.Component {
       margin:   '1px 5px',
       width:    '20em',
       fontSize: '11pt',
-      padding:  '1px 3px'
+      padding:  '1px 3px',
+      backgroundColor: 'rgb(0, 0, 0)',
+      color:    'rgba(255, 255, 255, 0.88)',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
     };
 
     return (
@@ -145,53 +145,61 @@ export default class NetKANs extends React.Component {
         <Table
           rowHeight={40}
           headerHeight={30}
-          rowGetter={index => rows[index]}
           rowsCount={rows.length}
           width={this.state.tableWidth}
           height={this.state.tableHeight}
           overflowX="auto"
           overflowY="auto">
           <Column
-            headerRenderer={this._renderHeader.bind(this)}
-            cellRenderer={id => <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + id + ".netkan"}>{id}</a>}
-            dataKey="id"
+            header={this._header('id', 'NetKAN')}
+            cell={({rowIndex, ...props}) => (
+                <Cell className="moduleCell" {...props}>
+                    <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>{rows[rowIndex].id}</a>
+                    <div className="moduleMenu">
+                        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>History</a>
+                        { [" | ", <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + rows[rowIndex].id}>Metadata</a>] }
+                        { 'homepage' in rows[rowIndex]
+                            && [" | ", <a href={rows[rowIndex].homepage}>Homepage</a>] }
+                        { 'spacedock' in rows[rowIndex]
+                            && [" | ", <a href={rows[rowIndex].spacedock}>SpaceDock</a>] }
+                        { 'repository' in rows[rowIndex]
+                            && [" | ", <a href={rows[rowIndex].repository}>Repository</a>] }
+                        { 'curse' in rows[rowIndex]
+                            && [" | ", <a href={rows[rowIndex].curse}>Curse</a>] }
+                        { 'bugtracker' in rows[rowIndex]
+                            && [" | ", <a href={rows[rowIndex].bugtracker}>Bug Tracker</a>] }
+                    </div>
+                </Cell>
+            )}
             fixed={true}
-            label={'NetKAN' + sortDirArrow('id')}
             width={200}
             flexGrow={1}
           />
           <Column
-            headerRenderer={this._renderHeader.bind(this)}
-            cellRenderer={renderDate}
-            dataKey="last_checked"
+            header={this._header('last_checked', 'Last Checked')}
+            cell={({rowIndex, ...props}) => (<Cell {...props}>{renderDate(rows[rowIndex].last_checked)}</Cell>)}
             fixed={true}
-            label={'Last Checked' + sortDirArrow('last_checked')}
             width={120}
             flexGrow={0}
           />
           <Column
-            headerRenderer={this._renderHeader.bind(this)}
-            cellRenderer={renderDate}
-            dataKey="last_inflated"
+            header={this._header('last_inflated', 'Last Inflated')}
+            cell={({rowIndex, ...props}) => (<Cell {...props}>{renderDate(rows[rowIndex].last_inflated)}</Cell>)}
             fixed={true}
-            label={'Last Inflated' + sortDirArrow('last_inflated')}
             width={120}
             flexGrow={0}
           />
           <Column
-            headerRenderer={this._renderHeader.bind(this)}
-            cellRenderer={renderDate}
-            dataKey="last_indexed"
+            header={this._header('last_indexed', 'Last Indexed')}
+            cell={({rowIndex, ...props}) => (<Cell {...props}>{renderDate(rows[rowIndex].last_indexed)}</Cell>)}
             fixed={true}
-            label={'Last Indexed' + sortDirArrow('last_indexed')}
             width={120}
             flexGrow={0}
           />
           <Column
-            headerRenderer={this._renderHeader.bind(this)}
-            dataKey="last_error"
+            header={this._header('last_error', 'Error')}
+            cell={({rowIndex, ...props}) => (<Cell {...props}>{rows[rowIndex].last_error}</Cell>)}
             fixed={false}
-            label={'Last Error' + sortDirArrow('last_error')}
             width={200}
             flexGrow={4}
           />
