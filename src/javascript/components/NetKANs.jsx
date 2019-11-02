@@ -84,7 +84,17 @@ export default class NetKANs extends React.Component {
     return this.state.sortDir === 'DESC' ? ' ▾' : ' ▴';
   }
   _header(key, name) {
-      return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
+    return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
+  }
+  _resourcesList({resources}) {
+    var val = [];
+    if (resources) {
+      for (const key of Object.keys(resources)) {
+        val.push(' | ');
+        val.push(<a href={resources[key]}>{key}</a>);
+      }
+    }
+    return val;
   }
   render() {
     const sortBy = this.state.sortBy;
@@ -156,18 +166,9 @@ export default class NetKANs extends React.Component {
                 <Cell className="moduleCell" {...props}>
                     <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>{rows[rowIndex].id}</a>
                     <div className="moduleMenu">
-                        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>History</a>
-                        { [" | ", <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + rows[rowIndex].id}>Metadata</a>] }
-                        { 'homepage' in rows[rowIndex]
-                            && [" | ", <a href={rows[rowIndex].homepage}>Homepage</a>] }
-                        { 'spacedock' in rows[rowIndex]
-                            && [" | ", <a href={rows[rowIndex].spacedock}>SpaceDock</a>] }
-                        { 'repository' in rows[rowIndex]
-                            && [" | ", <a href={rows[rowIndex].repository}>Repository</a>] }
-                        { 'curse' in rows[rowIndex]
-                            && [" | ", <a href={rows[rowIndex].curse}>Curse</a>] }
-                        { 'bugtracker' in rows[rowIndex]
-                            && [" | ", <a href={rows[rowIndex].bugtracker}>Bug Tracker</a>] }
+                        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>history</a>
+                        { [" | ", <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + rows[rowIndex].id}>metadata</a>] }
+                        { this._resourcesList(rows[rowIndex]) }
                     </div>
                 </Cell>
             )}
