@@ -90,8 +90,10 @@ export default class NetKANs extends React.Component {
     var val = [];
     if (resources) {
       for (const key of Object.keys(resources)) {
-        val.push(' | ');
-        val.push(<a href={resources[key]}>{key}</a>);
+        if (!key.startsWith('x_')) {
+          val.push(' | ');
+          val.push(<a href={resources[key]}>{key}</a>);
+        }
       }
     }
     return val;
@@ -173,7 +175,7 @@ export default class NetKANs extends React.Component {
                 </Cell>
             )}
             fixed={true}
-            width={200}
+            width={250}
             flexGrow={1}
           />
           <Column
