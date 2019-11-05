@@ -66,10 +66,10 @@ export default class NetKANs extends React.Component {
     this._updateTimer = setTimeout(this._updateTableSize, 16);
   }
   _updateTableSize() {
-    const widthOffset = window.innerWidth < 680 ? 0 : 20;
+    const widthOffset = window.innerWidth < 680 ? 0 : 10;
     this.setState({
       tableWidth: window.innerWidth - widthOffset,
-      tableHeight: window.innerHeight - 50,
+      tableHeight: window.innerHeight - 45,
     });
   }
   _onFilterChange(e) {
@@ -86,14 +86,16 @@ export default class NetKANs extends React.Component {
   _header(key, name) {
     return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
   }
-  _resourcesList({resources}) {
-    var val = [];
+  _resourcesList({id, resources}) {
+    var val = [
+        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + id + ".netkan"}>history</a>,
+        " | ",
+        <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + id}>metadata</a>
+    ];
     if (resources) {
-      for (const key of Object.keys(resources)) {
-        if (!key.startsWith('x_')) {
-          val.push(' | ');
-          val.push(<a href={resources[key]}>{key}</a>);
-        }
+      for (const key of Object.keys(resources).filter(name => !name.startsWith('x_')).sort()) {
+        val.push(' | ');
+        val.push(<a href={resources[key]}>{key}</a>);
       }
     }
     return val;
@@ -111,29 +113,32 @@ export default class NetKANs extends React.Component {
 
     rows.sort((a, b) => {
       let sortVal = 0;
-      a = a[sortBy] ?
-        a[sortBy].toLowerCase() : '';
-      b = b[sortBy] ?
-        b[sortBy].toLowerCase() : '';
-
-      if (a > b) {
+      var aVal = a[sortBy] ? a[sortBy].toLowerCase() : '';
+      var bVal = b[sortBy] ? b[sortBy].toLowerCase() : '';
+      if (aVal > bVal) {
         sortVal = 1;
-      }
-      if (a < b) {
+      } else if (aVal < bVal) {
         sortVal = -1;
+      } else if (sortBy !== 'id') {
+        sortVal = a.id < b.id ?  1
+                : a.id > b.id ? -1
+                :                0;
       }
-      return sortDir === 'DESC' ?
-        sortVal * -1 : sortVal;
+      return sortDir === 'DESC' ? sortVal * -1 : sortVal;
     });
 
-
     const divstyle = {
-      fontSize: '9pt'
+      fontSize:        '9pt',
+      fontFamily:      'sans-serif',
+      backgroundColor: 'rgb(19, 19, 19)',
+      color:           'rgb(255, 255, 255)',
+      padding:         '5px'
     };
     const h1style = {
       color:              'rgb(240, 240, 240)',
       fontSize:           '16pt',
-      margin:             '5px 0',
+      margin:             '0',
+      padding:            '5px 0',
       paddingLeft:        '72px',
       backgroundImage:    'url(favicon.ico)',
       backgroundPosition: 'left center',
@@ -165,14 +170,10 @@ export default class NetKANs extends React.Component {
           <Column
             header={this._header('id', 'NetKAN')}
             cell={({rowIndex, ...props}) => (
-                <Cell className="moduleCell" {...props}>
-                    <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>{rows[rowIndex].id}</a>
-                    <div className="moduleMenu">
-                        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>history</a>
-                        { [" | ", <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + rows[rowIndex].id}>metadata</a>] }
-                        { this._resourcesList(rows[rowIndex]) }
-                    </div>
-                </Cell>
+              <Cell {...props}>
+                <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>{rows[rowIndex].id}</a>
+                <div className="moduleMenu">{this._resourcesList(rows[rowIndex])}</div>
+              </Cell>
             )}
             fixed={true}
             width={250}
@@ -201,7 +202,7 @@ export default class NetKANs extends React.Component {
           />
           <Column
             header={this._header('last_error', 'Error')}
-            cell={({rowIndex, ...props}) => (<Cell {...props}>{rows[rowIndex].last_error}</Cell>)}
+            cell={({rowIndex, ...props}) => (<Cell className="error" {...props}>{rows[rowIndex].last_error}</Cell>)}
             fixed={false}
             width={200}
             flexGrow={4}
