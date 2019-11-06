@@ -5,12 +5,13 @@ script:
 - npm run build
 deploy:
   provider: s3
+  skip_cleanup: true
   access_key_id: AKIAZA4K6RW77XSCAMI2
   secret_access_key:
     secure: b4XpktTe5PGzPMRmWtPCbnjTZqLWBV9+ERp3vZY31sm7PigPpL0TQVI7gTVkVzugsmzflVQFehs2QqbSoiTDD7k+uF7RCUZ9SwfdlPf6j1QWU9ljLPBZEWMzfOFufYP0Ybx3YHslL+2Sdo2EJmaJhNL8slbMADm9V5LZwwrC8h4XNI2ZUQNH9EZNrLGauf8B9kffKCahZjjRPOESH4DBL0eCT4Wsp6Qmp4wzVUkdzAjEEOa6/rYCaJuh31cn9rMCat1ZGF8pvhgcG2okjbEe9WRveqjHWfOhEYm4bI518Z/J40hSRsFLm5nXEs560NP8qlkFUkpx1Zhla4a69dIPwJ2HKK1qoHbnXLFWbJD7DfxhXQKi1DcXGC9wTEqNFvSgAf02UhhV9JTCN/+moqTyIWfYuf7HnnsxO0Y49YT2hv8dO8tT1yYWyski+i1dCa0+mccFBylJ0tzJgEMR5BvNEwCuA8OpjWBdq9iWmCTKHQK84IcCQzunvufAAmy7BbqRu+hOYAilHYQoowy2POTjAaUJainNH1EYJYqY4Dpw45CFiw5EF4gGRURtqtysSioLxcW2gF6wDV3XbdKjxOu6OUq0ks3mdvjJ5y7gb18JeH1dlNwo8abLlNofFSwqK85Z60BqXOXC5xk4V8BdrKI3Q+bFyp1mRthpj/mbjdITxtg=
   bucket: status.ksp-ckan.space
   local-dir: dist
-  acl: public_read
+  region: us-west-2
   on:
     repo: KSP-CKAN/NetKAN-status
     branch: master
