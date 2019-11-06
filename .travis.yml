@@ -12,6 +12,7 @@ deploy:
   bucket: status.ksp-ckan.space
   local-dir: dist
   acl: public_read
+  region: us-west-2
   on:
     repo: KSP-CKAN/NetKAN-status
     branch: fix_build
