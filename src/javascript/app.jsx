@@ -3,17 +3,14 @@ import ReactDom from 'react-dom';
 import NetKANs from './components/NetKANs.jsx';
 import datatableStyles from
   '../../node_modules/fixed-data-table/dist/fixed-data-table.min.css';
+import customStyles from './app.css';
 
-var sheet = document.createElement('style');
-sheet.type = 'text/css';
-sheet.innerHTML = 'html,body{background-color:#f0f0f0;} input::-webkit-input-placeholder{font-style:italic;} a:link,a:visited{text-decoration:none;color:#009;} a:hover,a:active{text-decoration:underline;}';
-document.body.appendChild(sheet);
-
-document.body.innerHTML += '<div id="content"></div>';
+document.body.className = window.localStorage.getItem('darkTheme')
+    ? 'darkTheme' : 'lightTheme';
 
 ReactDom.render(
   <NetKANs
     url="http://status.ksp-ckan.space/status/netkan.json"
     pollInterval={300000} />,
-  document.getElementById('content')
+  document.body
 );

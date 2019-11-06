@@ -1,0 +1,120 @@
+/* Common layout */
+
+html, body {
+    margin:  0;
+    padding: 0;
+}
+input::-webkit-input-placeholder {
+    font-style: italic;
+}
+.public_fixedDataTableRow_highlighted .public_fixedDataTableCell_main,
+.public_fixedDataTableCell_main {
+    background: inherit;
+}
+.public_fixedDataTableCell_cellContent {
+    padding: 2px 8px;
+}
+a:link,
+a:visited {
+    text-decoration: none;
+}
+a:hover,
+a:active {
+    text-decoration: underline;
+}
+.moduleMenu {
+    visibility: hidden;
+    opacity:    0;
+    margin-top: -1em;
+    transition: visibility 0s linear 300ms, opacity 300ms, margin-top 300ms ease-in;
+}
+.public_fixedDataTableRow_main:hover .moduleMenu {
+    visibility: visible;
+    opacity:    1;
+    margin-top: 0;
+    transition: visibility 0s linear 0s, opacity 300ms, margin-top 300ms ease-out;
+}
+.moduleMenu {
+    font-size: 8pt;
+}
+button {
+    border: 0;
+    border-radius: 2px;
+    padding: 5px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+/* Original light theme */
+
+.lightTheme .darkOnly {
+    display: none;
+}
+.lightTheme .outer {
+    background-color: #f0f0f0;
+}
+.lightTheme a:link,
+.lightTheme a:visited {
+    color: #009;
+}
+
+
+/* Dark theme */
+
+.darkTheme .lightOnly {
+    display: none;
+}
+.darkTheme .outer {
+    background-color: rgb(19, 19, 19);
+    color:            rgb(255, 255, 255);
+}
+.darkTheme h1 {
+    color: rgb(240, 240, 240);
+}
+.darkTheme button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgb(170, 170, 170);
+}
+.darkTheme .public_fixedDataTable_main,
+.darkTheme .public_fixedDataTableRow_main {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.darkTheme .public_fixedDataTableRow_fixedColumnsDivider,
+.darkTheme .public_fixedDataTableCell_main {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+.darkTheme .public_fixedDataTable_header,
+.darkTheme .public_fixedDataTable_header .public_fixedDataTableCell_main {
+    color:            rgba(255, 255, 255, 0.88);
+    background-color: rgba(40, 40, 40, 0.98);
+    background-image: linear-gradient(rgba(40, 40, 40, 0.98), rgba(32, 32, 32, 0.98));
+}
+.darkTheme .public_fixedDataTableRow_even {
+    background-color: rgb(19, 19, 19);
+}
+.darkTheme .public_fixedDataTableRow_odd.public_fixedDataTableRow_highlighted {
+    background-color: rgb(27, 27, 27);
+}
+/* Possibly bad for color blindness
+.darkTheme .error {
+    color: rgb(255, 100, 100);
+}
+*/
+.darkTheme a:link,
+.darkTheme a:visited {
+    color: rgb(62, 166, 255);
+}
+.darkTheme .moduleMenu {
+    color: rgba(144, 144, 144, 0.7);
+}
+.darkTheme .moduleMenu a:link,
+.darkTheme .moduleMenu a:visited {
+    color: rgba(144, 144, 144, 0.9);
+}
+.darkTheme input {
+    background-color: rgb(0, 0, 0);
+    color:            rgba(255, 255, 255, 0.88);
+    border-color:     rgba(255, 255, 255, 0.2);
+}
