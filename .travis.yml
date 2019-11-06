@@ -14,4 +14,4 @@ deploy:
   acl: public_read
   on:
     repo: KSP-CKAN/NetKAN-status
-    branch: master
+    branch: fix_build
