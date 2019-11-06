@@ -100,6 +100,12 @@ export default class NetKANs extends React.Component {
     }
     return val;
   }
+  _toggleTheme() {
+      var classes = document.body.classList;
+      classes.toggle('lightTheme');
+      classes.toggle('darkTheme');
+      window.localStorage.setItem('darkTheme', classes.contains('darkTheme'));
+  }
   render() {
     const sortBy = this.state.sortBy;
     const sortDir = this.state.sortDir;
@@ -130,19 +136,16 @@ export default class NetKANs extends React.Component {
     const divstyle = {
       fontSize:        '9pt',
       fontFamily:      'sans-serif',
-      backgroundColor: 'rgb(19, 19, 19)',
-      color:           'rgb(255, 255, 255)',
-      padding:         '5px'
+      padding:         '5px',
     };
     const h1style = {
-      color:              'rgb(240, 240, 240)',
       fontSize:           '16pt',
       margin:             '0',
       padding:            '5px 0',
       paddingLeft:        '72px',
       backgroundImage:    'url(favicon.ico)',
       backgroundPosition: 'left center',
-      backgroundRepeat:   'no-repeat'
+      backgroundRepeat:   'no-repeat',
     };
     const inputstyle = {
       float:    'right',
@@ -150,14 +153,19 @@ export default class NetKANs extends React.Component {
       width:    '20em',
       fontSize: '11pt',
       padding:  '1px 3px',
-      backgroundColor: 'rgb(0, 0, 0)',
-      color:    'rgba(255, 255, 255, 0.88)',
-      borderColor: 'rgba(255, 255, 255, 0.2)',
+    };
+    const buttonstyle = {
+      float:    'right',
+      margin:   '1px 5px',
     };
 
     return (
-      <div style={divstyle}>
+      <div style={divstyle} className="outer">
         <input onChange={this._onFilterChange} placeholder='filter...' style={inputstyle} autoFocus='true' type='search' />
+        <button onClick={this._toggleTheme} style={buttonstyle} title="Toggle theme">
+          <span className="darkOnly">☀</span>
+          <span className="lightOnly">🌙</span>
+        </button>
         <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
           rowHeight={40}

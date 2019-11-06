@@ -5,6 +5,9 @@ import datatableStyles from
   '../../node_modules/fixed-data-table/dist/fixed-data-table.min.css';
 import customStyles from './app.css';
 
+document.body.className = window.localStorage.getItem('darkTheme')
+    ? 'darkTheme' : 'lightTheme';
+
 ReactDom.render(
   <NetKANs
     url="http://status.ksp-ckan.space/status/netkan.json"
