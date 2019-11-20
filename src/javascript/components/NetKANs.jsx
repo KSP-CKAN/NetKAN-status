@@ -12,6 +12,8 @@ export default class NetKANs extends React.Component {
     this._onResize = this._onResize.bind(this);
     this._updateTableSize = this._updateTableSize.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this._toggleActive = this._toggleActive.bind(this);
+    this._toggleFrozen = this._toggleFrozen.bind(this);
     this.state = {
       data: [],
       filterText: '',
@@ -20,7 +22,11 @@ export default class NetKANs extends React.Component {
       filterBy: 'failed',
       filterId: null,
       sortBy: 'last_error',
-      sortDir: 'DESC'
+      sortDir: 'DESC',
+      activeCount: 0,
+      frozenCount: 0,
+      showActive: true,
+      showFrozen: false,
     }
 
     if (window.addEventListener) {
@@ -44,7 +50,11 @@ export default class NetKANs extends React.Component {
           item.id = key;
           return item;
         });
-        this.setState({data: netkan});
+        this.setState({
+          data: netkan,
+          activeCount: netkan.filter(row => !row.frozen).length,
+          frozenCount: netkan.filter(row =>  row.frozen).length,
+        });
         this._updateTableSize();
       },
       error: (xhr, status, err) => {
@@ -86,11 +96,16 @@ export default class NetKANs extends React.Component {
   _header(key, name) {
     return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
   }
-  _resourcesList({id, resources}) {
+  _netkanLink({id, frozen}) {
+    return <a {...(frozen ? {style: {textDecoration: 'line-through'}} : {})} href={
+      "https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + id + (frozen ? ".frozen" : ".netkan")
+    }>{id}</a>;
+  }
+  _resourcesList({id, resources, frozen}) {
     var val = [
-        <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + id + ".netkan"}>history</a>,
-        " | ",
-        <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + id}>metadata</a>
+      <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + id + (frozen ? ".frozen" : ".netkan")}>history</a>,
+      " | ",
+      <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + id}>metadata</a>
     ];
     if (resources) {
       for (const key of Object.keys(resources).filter(name => !name.startsWith('x_')).sort()) {
@@ -106,16 +121,25 @@ export default class NetKANs extends React.Component {
       classes.toggle('darkTheme');
       window.localStorage.setItem('darkTheme', classes.contains('darkTheme'));
   }
+  _toggleActive() {
+    this.setState({showActive: !this.state.showActive});
+  }
+  _toggleFrozen() {
+    this.setState({showFrozen: !this.state.showFrozen});
+  }
   render() {
     const sortBy = this.state.sortBy;
     const sortDir = this.state.sortDir;
 
-    const rows = this.state.filterId ?
-      this.state.data.filter((row) => {
-          var filt = this.state.filterId.toLowerCase();
-        return (row['id'].toLowerCase().indexOf(filt) !== -1)
-          || (row['last_error'] && row['last_error'].toLowerCase().indexOf(filt) !== -1);
-      }) : this.state.data;
+    const rows = (
+      this.state.filterId
+        ? this.state.data.filter(row => {
+            var filt = this.state.filterId.toLowerCase();
+            return (row['id'].toLowerCase().indexOf(filt) !== -1)
+              || (row['last_error'] && row['last_error'].toLowerCase().indexOf(filt) !== -1);
+          })
+        : this.state.data
+    ).filter(row => row.frozen ? this.state.showFrozen : this.state.showActive);
 
     rows.sort((a, b) => {
       let sortVal = 0;
@@ -158,14 +182,30 @@ export default class NetKANs extends React.Component {
       float:    'right',
       margin:   '1px 5px',
     };
+    const checkboxstyle = {
+      float:      'right',
+      marginLeft: '12px',
+      marginTop:  '7px',
+    };
+    const labelstyle = {
+      float:         'right',
+      paddingTop:    '7px',
+      paddingBottom: '7px',
+    };
 
     return (
       <div style={divstyle} className="outer">
-        <input onChange={this._onFilterChange} placeholder='filter...' style={inputstyle} autoFocus='true' type='search' />
         <button onClick={this._toggleTheme} style={buttonstyle} title="Toggle theme">
           <span className="darkOnly">☀</span>
           <span className="lightOnly">🌙</span>
         </button>
+        <input onChange={this._onFilterChange} placeholder='filter...' style={inputstyle} autoFocus='true' type='search' />
+        <label style={labelstyle} htmlFor="toggleFrozen">{this.state.frozenCount} frozen</label>
+        <input type="checkbox" style={checkboxstyle}
+          id="toggleFrozen" checked={this.state.showFrozen} onChange={this._toggleFrozen} />
+        <label style={labelstyle} htmlFor="toggleActive">{this.state.activeCount} active</label>
+        <input type="checkbox" style={checkboxstyle}
+          id="toggleActive" checked={this.state.showActive} onChange={this._toggleActive} />
         <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
           rowHeight={40}
@@ -179,7 +219,7 @@ export default class NetKANs extends React.Component {
             header={this._header('id', 'NetKAN')}
             cell={({rowIndex, ...props}) => (
               <Cell {...props}>
-                <a href={"https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + rows[rowIndex].id + ".netkan"}>{rows[rowIndex].id}</a>
+                {this._netkanLink(rows[rowIndex])}
                 <div className="moduleMenu">{this._resourcesList(rows[rowIndex])}</div>
               </Cell>
             )}
