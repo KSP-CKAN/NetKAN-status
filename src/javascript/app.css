@@ -102,6 +102,9 @@ button {
     color: rgb(255, 100, 100);
 }
 */
+.darkTheme label {
+    color: rgba(160, 160, 160, 0.9);
+}
 .darkTheme a:link,
 .darkTheme a:visited {
     color: rgb(62, 166, 255);
