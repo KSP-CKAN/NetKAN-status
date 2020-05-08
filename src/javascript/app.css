@@ -59,7 +59,12 @@ button {
 .lightTheme a:visited {
     color: #009;
 }
-
+.lightTheme .error {
+    color: hsl(0, 50%, 50%);
+}
+.lightTheme .warnings {
+    color: hsl(60, 50%, 50%);
+}
 
 /* Dark theme */
 
