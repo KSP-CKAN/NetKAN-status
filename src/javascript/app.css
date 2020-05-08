@@ -97,11 +97,13 @@ button {
 .darkTheme .public_fixedDataTableRow_odd.public_fixedDataTableRow_highlighted {
     background-color: rgb(27, 27, 27);
 }
-/* Possibly bad for color blindness
+/* Possibly bad for color blindness */
 .darkTheme .error {
-    color: rgb(255, 100, 100);
+    color: hsl(0, 100%, 80%);
 }
-*/
+.darkTheme .warnings {
+    color: hsl(60, 100%, 80%);
+}
 .darkTheme label {
     color: rgba(160, 160, 160, 0.9);
 }

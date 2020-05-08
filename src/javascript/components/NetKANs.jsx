@@ -249,8 +249,12 @@ export default class NetKANs extends React.Component {
             flexGrow={0}
           />
           <Column
-            header={this._header('last_error', 'Error')}
-            cell={({rowIndex, ...props}) => (<Cell className="error" {...props}>{rows[rowIndex].last_error}</Cell>)}
+            header={this._header('last_error', 'Error / Warnings')}
+            cell={({rowIndex, ...props}) => (<Cell className={
+                  rows[rowIndex].last_error    ? 'error'
+                : rows[rowIndex].last_warnings ? 'warnings'
+                : ''
+            } {...props}>{rows[rowIndex].last_error || rows[rowIndex].last_warnings}</Cell>)}
             fixed={false}
             width={200}
             flexGrow={4}
