@@ -45,6 +45,20 @@ button {
     font-weight: 500;
     cursor: pointer;
 }
+.error {
+    background: url("error.png") no-repeat;
+    background-size: 16px 16px;
+    padding-left: 18px;
+    display: inline-block;
+    min-height: 16px;
+}
+.warnings {
+    background: url("warnings.png") no-repeat;
+    background-size: 16px 16px;
+    padding-left: 18px;
+    display: inline-block;
+    min-height: 16px;
+}
 
 
 /* Original light theme */

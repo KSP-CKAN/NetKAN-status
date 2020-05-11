@@ -209,7 +209,7 @@ export default class NetKANs extends React.Component {
         <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
           rowHeight={40}
-          headerHeight={30}
+          headerHeight={35}
           rowsCount={rows.length}
           width={this.state.tableWidth}
           height={this.state.tableHeight}
@@ -249,12 +249,12 @@ export default class NetKANs extends React.Component {
             flexGrow={0}
           />
           <Column
-            header={this._header('last_error', 'Error / Warnings')}
-            cell={({rowIndex, ...props}) => (<Cell className={
+            header={this._header('last_error', <span><span className="error">Error</span> / <span className="warnings">Warnings</span></span>)}
+            cell={({rowIndex, ...props}) => (<Cell {...props}><div className={
                   rows[rowIndex].last_error    ? 'error'
                 : rows[rowIndex].last_warnings ? 'warnings'
                 : ''
-            } {...props}>{rows[rowIndex].last_error || rows[rowIndex].last_warnings}</Cell>)}
+            }>{rows[rowIndex].last_error || rows[rowIndex].last_warnings}</div></Cell>)}
             fixed={false}
             width={200}
             flexGrow={4}
