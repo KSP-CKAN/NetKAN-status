@@ -45,6 +45,20 @@ button {
     font-weight: 500;
     cursor: pointer;
 }
+.error {
+    background: url("error.png") no-repeat;
+    background-size: 16px 16px;
+    padding-left: 18px;
+    display: inline-block;
+    min-height: 16px;
+}
+.warnings {
+    background: url("warnings.png") no-repeat;
+    background-size: 16px 16px;
+    padding-left: 18px;
+    display: inline-block;
+    min-height: 16px;
+}
 
 
 /* Original light theme */
@@ -59,7 +73,12 @@ button {
 .lightTheme a:visited {
     color: #009;
 }
-
+.lightTheme .error {
+    color: hsl(0, 50%, 50%);
+}
+.lightTheme .warnings {
+    color: hsl(60, 50%, 50%);
+}
 
 /* Dark theme */
 
@@ -97,11 +116,13 @@ button {
 .darkTheme .public_fixedDataTableRow_odd.public_fixedDataTableRow_highlighted {
     background-color: rgb(27, 27, 27);
 }
-/* Possibly bad for color blindness
+/* Possibly bad for color blindness */
 .darkTheme .error {
-    color: rgb(255, 100, 100);
+    color: hsl(0, 100%, 80%);
 }
-*/
+.darkTheme .warnings {
+    color: hsl(60, 100%, 80%);
+}
 .darkTheme label {
     color: rgba(160, 160, 160, 0.9);
 }
