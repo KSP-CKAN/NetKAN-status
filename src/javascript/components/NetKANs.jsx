@@ -143,8 +143,38 @@ export default class NetKANs extends React.Component {
 
     rows.sort((a, b) => {
       let sortVal = 0;
-      var aVal = a[sortBy] ? a[sortBy].toLowerCase() : '';
-      var bVal = b[sortBy] ? b[sortBy].toLowerCase() : '';
+      var aVal = '';
+      var bVal = '';
+      if (sortBy === 'last_error') {
+        if (a.last_error) {
+          if (b.last_error) {
+            // Two errors, compare them
+            aVal = a.last_error;
+            bVal = b.last_error;
+          } else {
+            // Errors sort to top
+            return -1;
+          }
+        } else if (b.last_error) {
+          // Errors sort to top
+          return 1;
+        } else if (a.last_warnings) {
+          if (b.last_warnings) {
+            // Two warnings, compare them
+            aVal = a.last_warnings;
+            bVal = b.last_warnings;
+          } else {
+            // Warnings sort above nothing
+            return -1;
+          }
+        } else if (b.last_warnings) {
+          // Warnings sort above nothing
+          return 1;
+        }
+      } else {
+        aVal = a[sortBy] ? a[sortBy].toLowerCase() : '';
+        bVal = b[sortBy] ? b[sortBy].toLowerCase() : '';
+      }
       if (aVal > bVal) {
         sortVal = 1;
       } else if (aVal < bVal) {
