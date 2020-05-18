@@ -135,8 +135,9 @@ export default class NetKANs extends React.Component {
       this.state.filterId
         ? this.state.data.filter(row => {
             var filt = this.state.filterId.toLowerCase();
-            return (row['id'].toLowerCase().indexOf(filt) !== -1)
-              || (row['last_error'] && row['last_error'].toLowerCase().indexOf(filt) !== -1);
+            return (row.id.toLowerCase().indexOf(filt) !== -1)
+              || (row.last_error && row.last_error.toLowerCase().indexOf(filt) !== -1)
+              || (row.last_warnings && row.last_warnings.toLowerCase().indexOf(filt) !== -1);
           })
         : this.state.data
     ).filter(row => row.frozen ? this.state.showFrozen : this.state.showActive);
