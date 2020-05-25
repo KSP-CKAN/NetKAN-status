@@ -22,7 +22,7 @@ export default class NetKANs extends React.Component {
       filterBy: 'failed',
       filterId: null,
       sortBy: 'last_error',
-      sortDir: 'DESC',
+      sortDir: 'ASC',
       activeCount: 0,
       frozenCount: 0,
       showActive: true,
@@ -63,8 +63,10 @@ export default class NetKANs extends React.Component {
     });
   }
   _updateSort(key) {
-    const sortDir = key === this.state.sortBy ?
-      (this.state.sortDir === 'ASC' ? 'DESC' : 'ASC') : 'DESC';
+    const sortDir =
+        key === this.state.sortBy
+            ? (this.state.sortDir === 'ASC' ? 'DESC' : 'ASC')
+            : (key === 'id' || key === 'last_error' ? 'ASC' : 'DESC');
 
     this.setState({
       sortBy: key,
@@ -127,6 +129,9 @@ export default class NetKANs extends React.Component {
   _toggleFrozen() {
     this.setState({showFrozen: !this.state.showFrozen});
   }
+  Array_count_if(array, func) {
+    return array.reduce((c, elt) => func(elt) ? c + 1 : c, 0);
+  }
   render() {
     const sortBy = this.state.sortBy;
     const sortDir = this.state.sortDir;
@@ -187,6 +192,9 @@ export default class NetKANs extends React.Component {
       }
       return sortDir === 'DESC' ? sortVal * -1 : sortVal;
     });
+
+    const errCount = this.Array_count_if(rows, r => r.last_error);
+    const warnCount = this.Array_count_if(rows, r => !r.last_error && r.last_warnings);
 
     const divstyle = {
       fontSize:        '9pt',
@@ -280,7 +288,7 @@ export default class NetKANs extends React.Component {
             flexGrow={0}
           />
           <Column
-            header={this._header('last_error', <span><span className="error">Error</span> / <span className="warnings">Warnings</span></span>)}
+            header={this._header('last_error', <span><span className="error">{errCount} Errors</span> / <span className="warnings">{warnCount} Warnings</span></span>)}
             cell={({rowIndex, ...props}) => (<Cell {...props}><div className={
                   rows[rowIndex].last_error    ? 'error'
                 : rows[rowIndex].last_warnings ? 'warnings'
