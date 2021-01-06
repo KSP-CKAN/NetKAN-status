@@ -267,15 +267,15 @@ export default class NetKANs extends React.Component {
             flexGrow={1}
           />
           <Column
-            header={this._header('last_checked', 'Last Checked')}
-            cell={({rowIndex, ...props}) => (<Cell title={new Date(rows[rowIndex].last_checked)} {...props}>{renderDate(rows[rowIndex].last_checked)}</Cell>)}
+            header={this._header('last_inflated', 'Last Inflated')}
+            cell={({rowIndex, ...props}) => (<Cell title={new Date(rows[rowIndex].last_inflated)} {...props}>{renderDate(rows[rowIndex].last_inflated)}</Cell>)}
             fixed={true}
             width={120}
             flexGrow={0}
           />
           <Column
-            header={this._header('last_inflated', 'Last Inflated')}
-            cell={({rowIndex, ...props}) => (<Cell title={new Date(rows[rowIndex].last_inflated)} {...props}>{renderDate(rows[rowIndex].last_inflated)}</Cell>)}
+            header={this._header('last_downloaded', 'Last Downloaded')}
+            cell={({rowIndex, ...props}) => (<Cell title={new Date(rows[rowIndex].last_downloaded)} {...props}>{renderDate(rows[rowIndex].last_downloaded)}</Cell>)}
             fixed={true}
             width={120}
             flexGrow={0}
