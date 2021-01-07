@@ -1,0 +1,13 @@
+name: Build CKAN Status
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build CKAN Status
+        run: npm install && npm run build
