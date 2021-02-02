@@ -7,6 +7,9 @@ html, body {
 input::-webkit-input-placeholder {
     font-style: italic;
 }
+.public_fixedDataTable_header {
+    cursor: pointer;
+}
 .public_fixedDataTableRow_highlighted .public_fixedDataTableCell_main,
 .public_fixedDataTableCell_main {
     background: inherit;
