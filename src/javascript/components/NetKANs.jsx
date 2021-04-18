@@ -14,6 +14,8 @@ export default class NetKANs extends React.Component {
     this._onFilterChange = this._onFilterChange.bind(this);
     this._toggleActive = this._toggleActive.bind(this);
     this._toggleFrozen = this._toggleFrozen.bind(this);
+    this._toggleMeta = this._toggleMeta.bind(this);
+    this._toggleNonmeta = this._toggleNonmeta.bind(this);
     this.state = {
       data: [],
       filterText: '',
@@ -27,6 +29,8 @@ export default class NetKANs extends React.Component {
       frozenCount: 0,
       showActive: true,
       showFrozen: false,
+      showMeta: true,
+      showNonmeta: true,
     }
 
     if (window.addEventListener) {
@@ -54,6 +58,8 @@ export default class NetKANs extends React.Component {
           data: netkan,
           activeCount: netkan.filter(row => !row.frozen).length,
           frozenCount: netkan.filter(row =>  row.frozen).length,
+          metaCount: netkan.filter(row => row.resources.metanetkan).length,
+          nonmetaCount: netkan.filter(row => !row.resources.metanetkan).length,
         });
         this._updateTableSize();
       },
@@ -129,6 +135,12 @@ export default class NetKANs extends React.Component {
   _toggleFrozen() {
     this.setState({showFrozen: !this.state.showFrozen});
   }
+  _toggleMeta() {
+    this.setState({showMeta: !this.state.showMeta});
+  }
+  _toggleNonmeta() {
+    this.setState({showNonmeta: !this.state.showNonmeta});
+  }
   Array_count_if(array, func) {
     return array.reduce((c, elt) => func(elt) ? c + 1 : c, 0);
   }
@@ -144,8 +156,9 @@ export default class NetKANs extends React.Component {
               || (row.last_error && row.last_error.toLowerCase().indexOf(filt) !== -1)
               || (row.last_warnings && row.last_warnings.toLowerCase().indexOf(filt) !== -1);
           })
-        : this.state.data
-    ).filter(row => row.frozen ? this.state.showFrozen : this.state.showActive);
+        : this.state.data)
+        .filter(row => row.frozen ? this.state.showFrozen : this.state.showActive)
+        .filter(row => row.resources.metanetkan ? this.state.showMeta : this.state.showNonmeta);
 
     rows.sort((a, b) => {
       let sortVal = 0;
@@ -245,6 +258,12 @@ export default class NetKANs extends React.Component {
         <label style={labelstyle} htmlFor="toggleActive">{this.state.activeCount} active</label>
         <input type="checkbox" style={checkboxstyle}
           id="toggleActive" checked={this.state.showActive} onChange={this._toggleActive} />
+        <label style={labelstyle} htmlFor="toggleNonmeta">{this.state.nonmetaCount} non-meta</label>
+        <input type="checkbox" style={checkboxstyle}
+          id="toggleNonmeta" checked={this.state.showNonmeta} onChange={this._toggleNonmeta} />
+        <label style={labelstyle} htmlFor="toggleMeta">{this.state.metaCount} meta</label>
+        <input type="checkbox" style={checkboxstyle}
+          id="toggleMeta" checked={this.state.showMeta} onChange={this._toggleMeta} />
         <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
           rowHeight={40}
