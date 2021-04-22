@@ -21,12 +21,13 @@ export default class NetKANs extends React.Component {
       filterText: '',
       tableWidth: 200,
       tableHeight: 500,
-      filterBy: 'failed',
       filterId: null,
-      sortBy: 'last_error',
-      sortDir: 'ASC',
+      sortBy: null,
+      sortDir: null,
       activeCount: 0,
       frozenCount: 0,
+      metaCount: 0,
+      nonmetaCount: 0,
       showActive: true,
       showFrozen: false,
       showMeta: true,
@@ -61,6 +62,17 @@ export default class NetKANs extends React.Component {
           metaCount: netkan.filter(row => row.resources.metanetkan).length,
           nonmetaCount: netkan.filter(row => !row.resources.metanetkan).length,
         });
+        if (!this.state.sortBy) {
+            // Sort by errors if any active module has an error,
+            // else sort by last indexed time.
+            this.setState(netkan.some(row => row.last_error && !row.frozen) ? {
+                sortBy: 'last_error',
+                sortDir: 'ASC',
+            } : {
+                sortBy: 'last_indexed',
+                sortDir: 'DESC',
+            });
+        }
         this._updateTableSize();
       },
       error: (xhr, status, err) => {
