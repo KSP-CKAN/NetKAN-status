@@ -10,4 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build CKAN Status
-        run: npm install && npm run build
+        run: npm install --legacy-peer-deps && npm run build

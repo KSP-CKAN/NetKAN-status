@@ -44,6 +44,9 @@ export default class NetKANs extends React.Component {
     setInterval(this.loadNetKANsFromServer, this.props.pollInterval);
     this.loadNetKANsFromServer();
   }
+  componentDidMount() {
+    this._updateTableSize();
+  }
   loadNetKANsFromServer() {
     $.ajax({
       url: this.props.url,
@@ -73,7 +76,6 @@ export default class NetKANs extends React.Component {
                 sortDir: 'DESC',
             });
         }
-        this._updateTableSize();
       },
       error: (xhr, status, err) => {
         console.error(this.props.url, status, err.toString());
