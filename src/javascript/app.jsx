@@ -10,7 +10,7 @@ document.body.className = window.localStorage.getItem('darkTheme')
 
 ReactDom.render(
   <NetKANs
-    url="http://status.ksp-ckan.space/status/netkan.json"
+    url="/status/netkan.json"
     pollInterval={300000} />,
   document.body
 );
