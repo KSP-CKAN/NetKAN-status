@@ -5,7 +5,7 @@ Display Status information generated from NetKAN-bot
 
 To run locally:
 ```sh
-npm install --legacy-peer-deps
+npm install
 npm run build
 mkdir dist/status && wget http://status.ksp-ckan.space/status/netkan.json -O dist/status/netkan.json
 python3 -m http.server --directory dist

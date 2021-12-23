@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "watch": "webpack",
-    "build": "webpack --config webpack.build.config.js"
+    "build": "webpack --config webpack.build.config.js --mode=development",
+    "build-prod": "webpack --config webpack.build.config.js --mode=production"
   },
   "version": "0.0.0",
   "description": "Simple static site to display NetKAN indexing status",
@@ -26,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/techman83/NetKAN-status.git"
+    "url": "git://github.com/KSP-CKAN/NetKAN-status.git"
   },
   "author": "Leon Wright",
   "license": "MIT",
@@ -35,7 +36,8 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
     "babel-loader": "^8.0.6",
-    "html-webpack-plugin": "^2.30.1",
-    "webpack": "^3.12.0"
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
   }
 }
