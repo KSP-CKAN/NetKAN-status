@@ -62,6 +62,9 @@ button {
     display: inline-block;
     min-height: 16px;
 }
+.highlighted {
+    border-radius: 2px;
+}
 
 
 /* Original light theme */
@@ -81,6 +84,11 @@ button {
 }
 .lightTheme .warnings {
     color: hsl(60, 50%, 50%);
+}
+.lightTheme .highlighted {
+    background-color: hsla(60, 100%, 40%, 0.6);
+    box-shadow:       0 0 1px 2px
+                      hsla(60, 100%, 40%, 0.6);
 }
 
 /* Dark theme */
@@ -144,4 +152,10 @@ button {
     background-color: rgb(0, 0, 0);
     color:            rgba(255, 255, 255, 0.88);
     border-color:     rgba(255, 255, 255, 0.2);
+}
+.darkTheme .highlighted {
+    color:            rgb(0, 0, 0);
+    background-color: hsla(65, 100%, 50%, 0.6);
+    box-shadow:       0 0 1px 2px
+                      hsla(65, 100%, 50%, 0.6);
 }
