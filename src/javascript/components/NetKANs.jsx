@@ -3,6 +3,8 @@ import {Table, Column, Cell} from 'fixed-data-table';
 import $ from 'jquery';
 
 import renderDate from '../lib/renderDate.js';
+import debounce from '../lib/debounce.js';
+import Highlighted from './Highlighted.js';
 
 export default class NetKANs extends React.Component {
   constructor(props) {
@@ -18,7 +20,6 @@ export default class NetKANs extends React.Component {
     this._toggleNonmeta = this._toggleNonmeta.bind(this);
     this.state = {
       data: [],
-      filterText: '',
       tableWidth: 200,
       tableHeight: 500,
       filterId: null,
@@ -104,10 +105,9 @@ export default class NetKANs extends React.Component {
       tableHeight: window.innerHeight - 45,
     });
   }
-  _onFilterChange(e) {
-    this.setState({
-      filterId: e.target.value
-    });
+  _onFilterChange() {
+    var input = document.getElementById('filter');
+    this.setState({filterId: input.value});
   }
   _sortDirArrow(key) {
     if (key !== this.state.sortBy) {
@@ -118,10 +118,12 @@ export default class NetKANs extends React.Component {
   _header(key, name) {
     return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
   }
-  _netkanLink({id, frozen}) {
+  _netkanLink({id, frozen}, filterId) {
     return <a {...(frozen ? {style: {textDecoration: 'line-through'}} : {})} href={
       "https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + id + (frozen ? ".frozen" : ".netkan")
-    }>{id}</a>;
+    }>{<Highlighted Content={id}
+                    Search={filterId}
+                    HighlightClassName="highlighted" />}</a>;
   }
   _resourcesList({id, resources, frozen}) {
     var val = [
@@ -265,7 +267,9 @@ export default class NetKANs extends React.Component {
           <span className="darkOnly">☀</span>
           <span className="lightOnly">🌙</span>
         </button>
-        <input onChange={this._onFilterChange} placeholder='filter...' style={inputstyle} autoFocus='true' type='search' />
+        <input id='filter' placeholder='filter...' style={inputstyle} autoFocus={true} type='search'
+          onChange={debounce(evt => evt.target.value === '' || evt.target.value.length > 3,
+                             this._onFilterChange)} />
         <label style={labelstyle} htmlFor="toggleFrozen">{this.state.frozenCount} frozen</label>
         <input type="checkbox" style={checkboxstyle}
           id="toggleFrozen" checked={this.state.showFrozen} onChange={this._toggleFrozen} />
@@ -291,7 +295,7 @@ export default class NetKANs extends React.Component {
             header={this._header('id', 'NetKAN')}
             cell={({rowIndex, ...props}) => (
               <Cell {...props}>
-                {this._netkanLink(rows[rowIndex])}
+                {this._netkanLink(rows[rowIndex], this.state.filterId)}
                 <div className="moduleMenu">{this._resourcesList(rows[rowIndex])}</div>
               </Cell>
             )}
@@ -326,7 +330,9 @@ export default class NetKANs extends React.Component {
                   rows[rowIndex].last_error    ? 'error'
                 : rows[rowIndex].last_warnings ? 'warnings'
                 : ''
-            }>{rows[rowIndex].last_error || rows[rowIndex].last_warnings}</div></Cell>)}
+            }>{<Highlighted Content={rows[rowIndex].last_error || rows[rowIndex].last_warnings}
+                            Search={this.state.filterId}
+                            HighlightClassName="highlighted" />}</div></Cell>)}
             fixed={false}
             width={200}
             flexGrow={4}
@@ -335,4 +341,4 @@ export default class NetKANs extends React.Component {
       </div>
     );
   }
-};
+}
