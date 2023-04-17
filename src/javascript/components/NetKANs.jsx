@@ -18,6 +18,9 @@ export default class NetKANs extends React.Component {
     this._toggleFrozen = this._toggleFrozen.bind(this);
     this._toggleMeta = this._toggleMeta.bind(this);
     this._toggleNonmeta = this._toggleNonmeta.bind(this);
+    this._games = props.games;
+    // Reverse alphabetical because the checkboxes are backwards
+    this._games.sort((a, b) => b.name.localeCompare(a.name));
     this.state = {
       data: [],
       tableWidth: 200,
@@ -29,10 +32,12 @@ export default class NetKANs extends React.Component {
       frozenCount: 0,
       metaCount: 0,
       nonmetaCount: 0,
+      gameCounts: Object.fromEntries(this._games.map((game) => [game.id, 0])),
       showActive: true,
       showFrozen: false,
       showMeta: true,
       showNonmeta: true,
+      showGames: Object.fromEntries(this._games.map((game) => [game.id, true])),
     }
 
     if (window.addEventListener) {
@@ -49,39 +54,57 @@ export default class NetKANs extends React.Component {
     this._updateTableSize();
   }
   loadNetKANsFromServer() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: 'false',
-      success: (data) => {
-        const netkan = Object.keys(data).map((key) => {
-          const item = data[key] ? data[key] : {};
-          item.id = key;
-          return item;
-        });
-        this.setState({
-          data: netkan,
-          activeCount: netkan.filter(row => !row.frozen).length,
-          frozenCount: netkan.filter(row =>  row.frozen).length,
-          metaCount: netkan.filter(row => row.resources.metanetkan).length,
-          nonmetaCount: netkan.filter(row => !row.resources.metanetkan).length,
-        });
-        if (!this.state.sortBy) {
-            // Sort by errors if any active module has an error,
-            // else sort by last indexed time.
-            this.setState(netkan.some(row => row.last_error && !row.frozen) ? {
-                sortBy: 'last_error',
-                sortDir: 'ASC',
-            } : {
-                sortBy: 'last_indexed',
-                sortDir: 'DESC',
-            });
-        }
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.url, status, err.toString());
-      }
+    var all_data = {};
+    for (const game of this._games) {
+      $.ajax({url: game.status,
+              dataType: 'json',
+              cache: 'false',
+              success: (data) => {
+                all_data[game.id] = data;
+                if (Object.keys(all_data).length == this._games.length) {
+                  // Render once all games' data is received or errored
+                  this._loadAllGamesData(all_data);
+                }
+              },
+              error: (xhr, status, err) => {
+                console.error(game.status, status, err.toString());
+                // Add empty object for this game so we can see the other games
+                all_data[game.id] = {};
+                if (Object.keys(all_data).length == this._games.length) {
+                  // Render once all games' data is received or errored
+                  this._loadAllGamesData(all_data);
+                }
+              }});
+    }
+  }
+  _loadAllGamesData(all_data) {
+    const netkan = Object.entries(all_data).flatMap(([game_id, data]) =>
+                     Object.entries(data).map(([key, val]) => (
+                       {'game_id': game_id,
+                        'id': key,
+                        ...(val ? val : {})})));
+    this.setState({
+      data: netkan,
+      activeCount: netkan.filter(row => !row.frozen).length,
+      frozenCount: netkan.filter(row =>  row.frozen).length,
+      metaCount: netkan.filter(row => row.resources.metanetkan).length,
+      nonmetaCount: netkan.filter(row => !row.resources.metanetkan).length,
+      gameCounts: netkan.reduce((counts, row) => {
+                                  ++counts[row.game_id];
+                                  return counts;
+                                },
+                                Object.fromEntries(Object.keys(all_data)
+                                                         .map((game_id) => [game_id, 0]))),
     });
+    if (!this.state.sortBy) {
+        // Sort by errors if any active module has an error,
+        // else sort by last indexed time.
+        this.setState(netkan.some(row => row.last_error && !row.frozen)
+          ? {sortBy: 'last_error',
+             sortDir: 'ASC'}
+          : {sortBy: 'last_indexed',
+             sortDir: 'DESC'});
+    }
   }
   _updateSort(key) {
     const sortDir =
@@ -118,18 +141,19 @@ export default class NetKANs extends React.Component {
   _header(key, name) {
     return <Cell onClick={this._updateSort.bind(null, key)}>{name} {this._sortDirArrow(key)}</Cell>;
   }
-  _netkanLink({id, frozen}, filterId) {
-    return <a {...(frozen ? {style: {textDecoration: 'line-through'}} : {})} href={
-      "https://github.com/KSP-CKAN/NetKAN/tree/master/NetKAN/" + id + (frozen ? ".frozen" : ".netkan")
-    }>{<Highlighted Content={id}
+  _netkanLink({id, game_id, frozen}, filterId) {
+    const game = this._games.find(g => g.id == game_id);
+    return <a {...(frozen ? {style: {textDecoration: 'line-through'}} : {})} href={game.netkan(id, frozen)}>
+      {<Highlighted Content={id}
                     Search={filterId}
                     HighlightClassName="highlighted" />}</a>;
   }
-  _resourcesList({id, resources, frozen}) {
+  _resourcesList({id, game_id, resources, frozen}) {
+    const game = this._games.find(g => g.id == game_id);
     var val = [
-      <a href={"https://github.com/KSP-CKAN/NetKAN/commits/master/NetKAN/" + id + (frozen ? ".frozen" : ".netkan")}>history</a>,
+      <a href={game.history(id, frozen)}>history</a>,
       " | ",
-      <a href={"https://github.com/KSP-CKAN/CKAN-meta/tree/master/" + id}>metadata</a>
+      <a href={game.metadata(id, frozen)}>metadata</a>
     ];
     if (resources) {
       for (const key of Object.keys(resources).filter(name => !name.startsWith('x_')).sort()) {
@@ -157,6 +181,10 @@ export default class NetKANs extends React.Component {
   _toggleNonmeta() {
     this.setState({showNonmeta: !this.state.showNonmeta});
   }
+  _toggleGame(game_id) {
+    this.setState({showGames: {...this.state.showGames,
+                               [game_id]: !this.state.showGames[game_id]}});
+  }
   Array_count_if(array, func) {
     return array.reduce((c, elt) => func(elt) ? c + 1 : c, 0);
   }
@@ -173,6 +201,7 @@ export default class NetKANs extends React.Component {
               || (row.last_warnings && row.last_warnings.toLowerCase().indexOf(filt) !== -1);
           })
         : this.state.data)
+        .filter(row => this.state.showGames[row.game_id])
         .filter(row => row.frozen ? this.state.showFrozen : this.state.showActive)
         .filter(row => row.resources.metanetkan ? this.state.showMeta : this.state.showNonmeta);
 
@@ -249,16 +278,18 @@ export default class NetKANs extends React.Component {
     const buttonstyle = {
       float:    'right',
       margin:   '1px 5px',
+      padding:  '2px 5px',
     };
     const checkboxstyle = {
       float:      'right',
       marginLeft: '12px',
-      marginTop:  '7px',
+      marginTop:  '3px',
     };
     const labelstyle = {
       float:         'right',
-      paddingTop:    '7px',
-      paddingBottom: '7px',
+      paddingTop:    '3px',
+      paddingBottom: '4px',
+      marginRight:   '5px',
     };
 
     return (
@@ -270,6 +301,7 @@ export default class NetKANs extends React.Component {
         <input id='filter' placeholder='filter...' style={inputstyle} autoFocus={true} type='search'
           onChange={debounce(evt => evt.target.value === '' || evt.target.value.length > 3,
                              this._onFilterChange)} />
+        <span style={{float: 'right', clear: 'right'}}></span>
         <label style={labelstyle} htmlFor="toggleFrozen">{this.state.frozenCount} frozen</label>
         <input type="checkbox" style={checkboxstyle}
           id="toggleFrozen" checked={this.state.showFrozen} onChange={this._toggleFrozen} />
@@ -282,6 +314,20 @@ export default class NetKANs extends React.Component {
         <label style={labelstyle} htmlFor="toggleMeta">{this.state.metaCount} meta</label>
         <input type="checkbox" style={checkboxstyle}
           id="toggleMeta" checked={this.state.showMeta} onChange={this._toggleMeta} />
+        {
+          this._games.map((game) =>
+            <span key={game.id}>
+              <label style={labelstyle}
+                     htmlFor={`toggleGame_${game.id}`}>
+                {this.state.gameCounts[game.id]} {game.name}</label>
+              <input type="checkbox"
+                     style={checkboxstyle}
+                     id={`toggleGame_${game.id}`}
+                     checked={this.state.showGames[game.id]}
+                     onChange={() => this._toggleGame(game.id)} />
+            </span>
+          )
+        }
         <h1 style={h1style}>NetKANs Indexed</h1>
         <Table
           rowHeight={40}
