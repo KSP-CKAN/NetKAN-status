@@ -7,7 +7,7 @@ To run locally:
 ```sh
 npm install
 npm run build
-mkdir dist/status && wget http://status.ksp-ckan.space/status/netkan.json -O dist/status/netkan.json
+mkdir dist/status && wget http://status.ksp-ckan.space/status/netkan.json -O dist/status/netkan.json && wget http://status.ksp-ckan.space/status/netkan-ksp2.json -O dist/status/netkan-ksp2.json
 python3 -m http.server --directory dist
 ```
 
