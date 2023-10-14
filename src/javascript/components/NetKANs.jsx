@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {Table, Column, Cell} from 'fixed-data-table';
 import $ from 'jquery';
 
@@ -122,10 +123,17 @@ export default class NetKANs extends React.Component {
     this._updateTimer = setTimeout(this._updateTableSize, 16);
   }
   _updateTableSize() {
-    const widthOffset = window.innerWidth < 680 ? 0 : 10;
+    const myElt = ReactDOM.findDOMNode(this);
+    const { paddingLeft, paddingTop, paddingBottom, paddingRight } = getComputedStyle(myElt);
+    const bottom = window.scrollY + Math.max(...
+                     ['input', 'h1'].map((tagName) => myElt.getElementsByTagName(tagName))
+                                    // of course getElementsByTagName can't simply return a sensible array
+                                    .flatMap((htmlColl) => Array.prototype.slice.call(htmlColl))
+                                    .map((elt) => elt.getBoundingClientRect().bottom
+                                                  + parseFloat(getComputedStyle(elt).marginBottom)));
     this.setState({
-      tableWidth: window.innerWidth - widthOffset,
-      tableHeight: window.innerHeight - 45,
+      tableWidth:  window.innerWidth  - parseFloat(paddingLeft) - parseFloat(paddingRight),
+      tableHeight: window.innerHeight - parseFloat(paddingTop)  - parseFloat(paddingBottom) - bottom,
     });
   }
   _onFilterChange() {
