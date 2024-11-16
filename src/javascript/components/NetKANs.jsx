@@ -178,20 +178,50 @@ export default class NetKANs extends React.Component {
       window.localStorage.setItem('darkTheme', classes.contains('darkTheme'));
   }
   _toggleActive() {
-    this.setState({showActive: !this.state.showActive});
+    if (!this.state.showFrozen && this.state.showActive) {
+      this.setState({showActive: !this.state.showActive,
+                     showFrozen: true});
+    } else {
+      this.setState({showActive: !this.state.showActive});
+    }
   }
   _toggleFrozen() {
-    this.setState({showFrozen: !this.state.showFrozen});
+    if (!this.state.showActive && this.state.showFrozen) {
+      this.setState({showFrozen: !this.state.showFrozen,
+                     showActive: true});
+    } else {
+      this.setState({showFrozen: !this.state.showFrozen});
+    }
   }
   _toggleMeta() {
-    this.setState({showMeta: !this.state.showMeta});
+    if (!this.state.showNonmeta && this.state.showMeta) {
+      this.setState({showMeta:    !this.state.showMeta,
+                     showNonmeta: true});
+    } else {
+      this.setState({showMeta: !this.state.showMeta});
+    }
   }
   _toggleNonmeta() {
-    this.setState({showNonmeta: !this.state.showNonmeta});
+    if (!this.state.showMeta && this.state.showNonmeta) {
+      this.setState({showNonmeta: !this.state.showNonmeta,
+                     showMeta:    true});
+    } else {
+      this.setState({showNonmeta: !this.state.showNonmeta});
+    }
   }
   _toggleGame(game_id) {
-    this.setState({showGames: {...this.state.showGames,
-                               [game_id]: !this.state.showGames[game_id]}});
+    // Invert the box they clicked
+    var entries = Object.entries(this.state.showGames)
+                        .map((entry) => entry[0] == game_id
+                                            ? [entry[0], !entry[1]]
+                                            : entry);
+    if (entries.every((entry) => entry[1] === false)) {
+      // Check all the other boxes if everything is unchecked now
+      entries = entries.map((entry) => entry[0] != game_id
+                                           ? [entry[0], true]
+                                           : entry);
+    }
+    this.setState({showGames: Object.fromEntries(entries)});
   }
   Array_count_if(array, func) {
     return array.reduce((c, elt) => func(elt) ? c + 1 : c, 0);
