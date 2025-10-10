@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 94%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 94%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 80%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for NetKAN Status */
+.error-icon {
+  background: url('/error.png') no-repeat left center;
+  background-size: 16px 16px;
+  padding-left: 20px;
+  min-height: 16px;
+}
+
+.warning-icon {
+  background: url('/warnings.png') no-repeat left center;
+  background-size: 16px 16px;
+  padding-left: 20px;
+  min-height: 16px;
+}
+
+.error-text {
+  @apply text-red-600 dark:text-red-400;
+}
+
+.warning-text {
+  @apply text-yellow-600 dark:text-yellow-400;
+}
+
+.highlighted {
+  @apply bg-yellow-300 dark:bg-yellow-600 rounded-sm;
+  box-shadow: 0 0 1px 2px hsl(60, 100%, 40%, 0.6);
+}
+
+.dark .highlighted {
+  box-shadow: 0 0 1px 2px hsl(65, 100%, 50%, 0.6);
+}
+
+/* Module menu hover effect */
+.module-menu {
+  @apply opacity-0 transition-opacity duration-300 ease-in-out -mt-4;
+  visibility: hidden;
+}
+
+.table-row:hover .module-menu {
+  @apply opacity-100 mt-0;
+  visibility: visible;
+}
+
+/* Mobile card styles */
+.mobile-card {
+  @apply border rounded-lg bg-background overflow-hidden;
+}
+
+.mobile-card-header {
+  @apply p-4 cursor-pointer select-none;
+  min-height: 44px; /* Touch-friendly minimum */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-card-header:active {
+  @apply bg-muted/50;
+}
+
+.mobile-card-details {
+  @apply px-4 pb-4 pt-2 border-t;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-card-link {
+  @apply inline-block px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mobile-card-summary {
+  @apply px-4 py-3 mb-2 bg-muted/30 rounded-lg text-sm;
+}

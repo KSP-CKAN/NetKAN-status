@@ -1,18 +1,107 @@
-# NetKAN-status
-Display Status information generated from NetKAN-bot
+# NetKAN Status
+
+Display status information generated from NetKAN-bot.
+
+Source repo for: [https://status.ksp-ckan.space/](https://status.ksp-ckan.space/)
 
 ## Development
 
-To run locally:
+### Prerequisites
+
+- Node.js (recommend using [nvm](https://github.com/nvm-sh/nvm))
+- pnpm (enabled via corepack: `corepack enable`)
+
+### Setup
+
 ```sh
-npm install
-npm run build
-mkdir dist/status && wget http://status.ksp-ckan.space/status/netkan.json -O dist/status/netkan.json && wget http://status.ksp-ckan.space/status/netkan-ksp2.json -O dist/status/netkan-ksp2.json
-python3 -m http.server --directory dist
+# Install dependencies
+pnpm install
+
+# Run development server
+pnpm dev
 ```
 
-The local development server is available at <http://localhost:8000>.
+The development server will be available at <http://localhost:5173>.
 
-You can also install the [http-server](https://www.npmjs.com/package/http-server) npm package, or any other simple web server that just serves local files.
+### Local Development with Data
 
-`netkan.json` is downloaded locally to avoid CORS issues.
+To test with real data locally, create a `public/status/` directory and download both status files:
+
+```sh
+# Create directory and download the status files
+mkdir -p public/status
+wget http://status.ksp-ckan.space/status/netkan.json -O public/status/netkan.json
+wget http://status.ksp-ckan.space/status/netkan-ksp2.json -O public/status/netkan-ksp2.json
+```
+
+The app fetches two separate JSON files:
+
+- `/status/netkan.json` - KSP mods status
+- `/status/netkan-ksp2.json` - KSP2 mods status
+
+Then run the development server:
+
+```sh
+pnpm dev
+```
+
+Vite will serve the files from the `public/` directory during development.
+
+## Testing
+
+```sh
+# Run tests
+pnpm test
+
+# Run tests with UI
+pnpm test:ui
+
+# Run tests with coverage
+pnpm test:coverage
+```
+
+## Building
+
+```sh
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+The built files will be in the `dist/` directory.
+
+## Project Structure
+
+```sh
+src/
+├── components/          # React components
+│   ├── ui/             # shadcn/ui components
+│   ├── App.tsx         # Main app component
+│   ├── FilterControls.tsx
+│   ├── Highlighted.tsx
+│   ├── NetKANTable.tsx
+│   └── ThemeToggle.tsx
+├── hooks/              # Custom React hooks
+│   ├── useNetKANData.ts
+│   └── useTheme.ts
+├── lib/                # Utility functions
+│   ├── data-fetcher.ts
+│   ├── data-filter.ts
+│   ├── date.ts
+│   ├── debounce.ts
+│   ├── game-config.ts
+│   └── utils.ts
+├── types/              # TypeScript type definitions
+│   └── netkan.ts
+├── styles/             # Global styles
+│   └── globals.css
+├── test/               # Test utilities
+│   └── setup.ts
+└── main.tsx            # Application entry point
+```
+
+## License
+
+MIT
