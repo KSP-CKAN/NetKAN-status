@@ -2,7 +2,7 @@
 
 Display status information generated from NetKAN-bot.
 
-Source repo for: [https://status.ksp-ckan.space/](https://status.ksp-ckan.space/)
+Source repo for: <https://status.ksp-ckan.space/>
 
 ## Development
 
@@ -30,8 +30,8 @@ To test with real data locally, create a `public/status/` directory and download
 ```sh
 # Create directory and download the status files
 mkdir -p public/status
-wget http://status.ksp-ckan.space/status/netkan.json -O public/status/netkan.json
-wget http://status.ksp-ckan.space/status/netkan-ksp2.json -O public/status/netkan-ksp2.json
+wget https://status.ksp-ckan.space/status/netkan.json -O public/status/netkan.json
+wget https://status.ksp-ckan.space/status/netkan-ksp2.json -O public/status/netkan-ksp2.json
 ```
 
 The app fetches two separate JSON files:
@@ -74,9 +74,9 @@ The built files will be in the `dist/` directory.
 
 ## Project Structure
 
-```sh
+```text
 src/
-├── components/          # React components
+├── components/         # React components
 │   ├── ui/             # shadcn/ui components
 │   ├── App.tsx         # Main app component
 │   ├── FilterControls.tsx
