@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 interface HighlightedProps {
   content: string | null | undefined;
   search: string | null | undefined;
@@ -21,7 +23,7 @@ export function Highlighted({ content, search, className = 'highlighted' }: High
 
   const searchLower = casefold(search);
   const contentLower = casefold(content);
-  const parts: (string | JSX.Element)[] = [];
+  const parts: (string | ReactElement)[] = [];
   let lastIndex = 0;
 
   let index = contentLower.indexOf(searchLower, lastIndex);
