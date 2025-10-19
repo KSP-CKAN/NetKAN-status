@@ -25,10 +25,13 @@ The development server will be available at <http://localhost:5173>.
 
 ### Local Development with Data
 
-To test with real data locally, create a `public/status/` directory and download both status files:
+To test with real data locally you will need to fetch the status files
 
 ```sh
-# Create directory and download the status files
+# Use the fetcher
+pnpm fetch:status
+
+# Alternatively, create directory and download the status files manually
 mkdir -p public/status
 wget https://status.ksp-ckan.space/status/netkan.json -O public/status/netkan.json
 wget https://status.ksp-ckan.space/status/netkan-ksp2.json -O public/status/netkan-ksp2.json

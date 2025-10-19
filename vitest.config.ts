@@ -17,6 +17,8 @@ export default defineConfig({
         '**/*.test.{ts,tsx}',
         '**/types/**',
         '*.config.{js,ts}',
+        'dist/',
+        'scripts/',
       ],
     },
   },

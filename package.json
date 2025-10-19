@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fetch:status": "node scripts/fetch-status.js",
     "build": "tsc && vite build",
+    "build:preview": "pnpm fetch:status && pnpm build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
