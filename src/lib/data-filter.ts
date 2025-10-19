@@ -18,18 +18,13 @@ export function filterNetKANs(
     });
   }
 
-  // Filter by game
-  filtered = filtered.filter((row) => filters.showGames[row.game_id]);
-
-  // Filter by frozen/active
   filtered = filtered.filter((row) =>
-    row.frozen ? filters.showFrozen : filters.showActive
-  );
-
-  // Filter by meta/non-meta
-  filtered = filtered.filter((row) =>
-    row.resources?.metanetkan ? filters.showMeta : filters.showNonmeta
-  );
+    // Filter by game
+    filters.showGames[row.game_id]
+    // Filter by frozen/active
+    && (row.frozen ? filters.showFrozen : filters.showActive)
+    // Filter by meta/non-meta
+    && (row.resources?.metanetkan ? filters.showMeta : filters.showNonmeta));
 
   return filtered;
 }
