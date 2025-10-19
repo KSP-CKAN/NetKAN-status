@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { FilterControls } from '@/components/FilterControls';
 import { NetKANTable } from '@/components/NetKANTable';
@@ -38,14 +38,11 @@ function App() {
         setSortDir('DESC');
       }
     }
-  }, [data, sortBy]);
+  });
 
-  const filteredData = useMemo(() => filterNetKANs(data, filters), [data, filters]);
-  const sortedData = useMemo(
-    () => sortNetKANs(filteredData, sortBy, sortDir),
-    [filteredData, sortBy, sortDir]
-  );
-  const counts = useMemo(() => calculateCounts(data), [data]);
+  const filteredData = filterNetKANs(data, filters);
+  const sortedData = sortNetKANs(filteredData, sortBy, sortDir);
+  const counts = calculateCounts(data);
 
   const handleSort = (column: string) => {
     if (sortBy === column) {
