@@ -103,7 +103,7 @@
 
 /* Mobile card styles */
 .mobile-card {
-  @apply border rounded-lg bg-background overflow-hidden;
+  @apply border rounded-lg overflow-hidden mb-2;
 }
 
 .mobile-card-header {
@@ -140,5 +140,5 @@
 }
 
 .mobile-card-summary {
-  @apply px-4 py-3 mb-2 bg-muted/30 rounded-lg text-sm;
+  @apply px-4 py-3 mb-2 bg-muted rounded-lg text-sm;
 }

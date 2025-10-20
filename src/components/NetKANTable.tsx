@@ -1,13 +1,5 @@
 import { useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Highlighted } from '@/components/Highlighted';
 import { NetKANMobileCard } from '@/components/NetKANMobileCard';
 import { formatRelativeDate } from '@/lib/date';
@@ -52,6 +44,7 @@ export function NetKANTable({
     getScrollElement: () => desktopParentRef.current,
     estimateSize: () => 80,
     overscan: 5,
+    measureElement: (el) => el.getBoundingClientRect().height,
   });
 
   // Mobile card virtualizer
@@ -61,162 +54,173 @@ export function NetKANTable({
     getScrollElement: () => mobileParentRef.current,
     estimateSize: () => 120,
     overscan: 5,
+    measureElement: (el) => el.getBoundingClientRect().height,
   });
 
   return (
     <>
       {/* Desktop table view - hidden on mobile */}
       <div ref={desktopParentRef} className="hidden sm:block h-full border rounded-md overflow-auto">
-        <Table>
-          <TableHeader className="sticky top-0 z-10 bg-background">
-            <TableRow>
-              <TableHead
-                className="cursor-pointer w-64"
-                onClick={() => onSort('id')}
-              >
-                NetKAN {sortIcon('id')}
-              </TableHead>
-              <TableHead
-                className="cursor-pointer w-32"
-                onClick={() => onSort('last_inflated')}
-              >
-                Last Inflated {sortIcon('last_inflated')}
-              </TableHead>
-              <TableHead
-                className="cursor-pointer w-32"
-                onClick={() => onSort('last_downloaded')}
-              >
-                Last Downloaded {sortIcon('last_downloaded')}
-              </TableHead>
-              <TableHead
-                className="cursor-pointer w-32"
-                onClick={() => onSort('last_indexed')}
-              >
-                Last Indexed {sortIcon('last_indexed')}
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => onSort('last_error')}
-              >
-                <span className="error-text">{errorCount} Errors</span> /{' '}
-                <span className="warning-text">{warnCount} Warnings</span>{' '}
-                {sortIcon('last_error')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <tr style={{ height: `${desktopVirtualizer.getTotalSize()}px` }}>
-              <td style={{ position: 'relative', width: '100%' }}>
-                {desktopVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const row = data[virtualRow.index];
-                  const game = getGame(row.game_id);
-                  if (!game) return null;
+        <div className="w-full">
+          {/* Header - sticky */}
+          <div
+            className="grid sticky top-0 z-10 bg-background border-b"
+            style={{ gridTemplateColumns: '16rem 8rem 8rem 8rem 1fr' }}
+          >
+            <div
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              onClick={() => onSort('id')}
+            >
+              NetKAN {sortIcon('id')}
+            </div>
+            <div
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              onClick={() => onSort('last_inflated')}
+            >
+              Last Inflated {sortIcon('last_inflated')}
+            </div>
+            <div
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              onClick={() => onSort('last_downloaded')}
+            >
+              Last Downloaded {sortIcon('last_downloaded')}
+            </div>
+            <div
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              onClick={() => onSort('last_indexed')}
+            >
+              Last Indexed {sortIcon('last_indexed')}
+            </div>
+            <div
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              onClick={() => onSort('last_error')}
+            >
+              <span className="error-text">{errorCount} Errors</span> /{' '}
+              <span className="warning-text">{warnCount} Warnings</span>{' '}
+              {sortIcon('last_error')}
+            </div>
+          </div>
 
-                  return (
-                    <div
-                      key={`${row.game_id}-${row.id}`}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
+          {/* Virtualized rows container */}
+          <div
+            className="relative"
+            style={{ height: `${desktopVirtualizer.getTotalSize()}px` }}
+          >
+            {desktopVirtualizer.getVirtualItems().map((virtualRow) => {
+              const row = data[virtualRow.index];
+              const game = getGame(row.game_id);
+              if (!game) return null;
+
+              return (
+                <div
+                  key={`${row.game_id}-${row.id}`}
+                  data-index={virtualRow.index}
+                  ref={desktopVirtualizer.measureElement}
+                  className={`grid table-row border-b min-h-[80px] transition-colors hover:bg-muted/50 ${
+                    virtualRow.index % 2 === 1 ? 'bg-muted' : 'bg-background'
+                  }`}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start}px)`,
+                    gridTemplateColumns: '16rem 8rem 8rem 8rem 1fr',
+                  }}
+                >
+                  {/* NetKAN Column */}
+                  <div className="p-4 align-middle break-words overflow-wrap-anywhere">
+                    <a
+                      href={game.netkan(row.id, row.frozen)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                      style={
+                        row.frozen ? { textDecoration: 'line-through' } : undefined
+                      }
                     >
-                      <table style={{ width: '100%', tableLayout: 'fixed' }}>
-                        <tbody>
-                          <TableRow
-                            className={`table-row ${virtualRow.index % 2 === 1 ? 'bg-muted/30' : ''}`}
-                          >
-                            <TableCell style={{ width: '16rem' }}>
+                      <Highlighted
+                        content={row.id}
+                        search={filterId}
+                      />
+                    </a>
+                    <div className="module-menu text-xs text-muted-foreground mt-1 break-words">
+                      <a
+                        href={game.history(row.id, row.frozen)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        history
+                      </a>
+                      {' | '}
+                      <a
+                        href={game.metadata(row.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        metadata
+                      </a>
+                      {row.resources &&
+                        Object.entries(row.resources)
+                          .filter(([key]) => !key.startsWith('x_'))
+                          .sort(([a], [b]) => a.localeCompare(b))
+                          .map(([key, url]) => (
+                            <span key={key} className="break-words">
+                              {' | '}
                               <a
-                                href={game.netkan(row.id, row.frozen)}
+                                href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary hover:underline"
-                                style={
-                                  row.frozen ? { textDecoration: 'line-through' } : undefined
-                                }
+                                className="hover:underline break-all"
                               >
-                                <Highlighted
-                                  content={row.id}
-                                  search={filterId}
-                                />
+                                {key}
                               </a>
-                              <div className="module-menu text-xs text-muted-foreground mt-1">
-                                <a
-                                  href={game.history(row.id, row.frozen)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="hover:underline"
-                                >
-                                  history
-                                </a>
-                                {' | '}
-                                <a
-                                  href={game.metadata(row.id)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="hover:underline"
-                                >
-                                  metadata
-                                </a>
-                                {row.resources &&
-                                  Object.entries(row.resources)
-                                    .filter(([key]) => !key.startsWith('x_'))
-                                    .sort(([a], [b]) => a.localeCompare(b))
-                                    .map(([key, url]) => (
-                                      <span key={key}>
-                                        {' | '}
-                                        <a
-                                          href={url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="hover:underline"
-                                        >
-                                          {key}
-                                        </a>
-                                      </span>
-                                    ))}
-                              </div>
-                            </TableCell>
-                            <TableCell style={{ width: '8rem' }} title={row.last_inflated || ''}>
-                              {formatRelativeDate(row.last_inflated)}
-                            </TableCell>
-                            <TableCell style={{ width: '8rem' }} title={row.last_downloaded || ''}>
-                              {formatRelativeDate(row.last_downloaded)}
-                            </TableCell>
-                            <TableCell style={{ width: '8rem' }} title={row.last_indexed || ''}>
-                              {formatRelativeDate(row.last_indexed)}
-                            </TableCell>
-                            <TableCell>
-                              {row.last_error && (
-                                <div className="error-icon error-text">
-                                  <Highlighted
-                                    content={row.last_error}
-                                    search={filterId}
-                                  />
-                                </div>
-                              )}
-                              {!row.last_error && row.last_warnings && (
-                                <div className="warning-icon warning-text">
-                                  <Highlighted
-                                    content={row.last_warnings}
-                                    search={filterId}
-                                  />
-                                </div>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        </tbody>
-                      </table>
+                            </span>
+                          ))}
                     </div>
-                  );
-                })}
-              </td>
-            </tr>
-          </TableBody>
-        </Table>
+                  </div>
+
+                  {/* Last Inflated Column */}
+                  <div className="p-4 align-middle" title={row.last_inflated || ''}>
+                    {formatRelativeDate(row.last_inflated)}
+                  </div>
+
+                  {/* Last Downloaded Column */}
+                  <div className="p-4 align-middle" title={row.last_downloaded || ''}>
+                    {formatRelativeDate(row.last_downloaded)}
+                  </div>
+
+                  {/* Last Indexed Column */}
+                  <div className="p-4 align-middle" title={row.last_indexed || ''}>
+                    {formatRelativeDate(row.last_indexed)}
+                  </div>
+
+                  {/* Error/Warning Column */}
+                  <div className="p-4 align-middle break-words">
+                    {row.last_error && (
+                      <div className="error-icon error-text whitespace-normal break-words">
+                        <Highlighted
+                          content={row.last_error}
+                          search={filterId}
+                        />
+                      </div>
+                    )}
+                    {!row.last_error && row.last_warnings && (
+                      <div className="warning-icon warning-text whitespace-normal break-words">
+                        <Highlighted
+                          content={row.last_warnings}
+                          search={filterId}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Mobile card view - shown only on mobile */}
@@ -227,7 +231,7 @@ export function NetKANTable({
           <span className="warning-text font-medium">{warnCount} Warnings</span>
         </div>
         <div
-          className="space-y-2 relative"
+          className="relative"
           style={{ height: `${mobileVirtualizer.getTotalSize()}px` }}
         >
           {mobileVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -238,6 +242,8 @@ export function NetKANTable({
             return (
               <div
                 key={`${row.game_id}-${row.id}`}
+                data-index={virtualRow.index}
+                ref={mobileVirtualizer.measureElement}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -250,7 +256,7 @@ export function NetKANTable({
                   entry={row}
                   game={game}
                   filterId={filterId}
-                  isEven={virtualRow.index % 2 === 1}
+                  isEven={virtualRow.index % 2 === 0}
                 />
               </div>
             );

@@ -24,11 +24,11 @@ export function NetKANMobileCard({
 
   return (
     <div
-      className={`mobile-card ${isEven ? 'bg-muted/30' : ''} ${
+      className={`mobile-card ${isEven ? 'bg-background' : 'bg-muted'} ${
         hasError ? 'border-l-4 border-l-red-600 dark:border-l-red-400' : ''
       } ${
         hasWarning ? 'border-l-4 border-l-yellow-600 dark:border-l-yellow-400' : ''
-      }`}
+      } ${isExpanded ? 'relative z-10' : 'relative z-0'}`}
     >
       {/* Collapsed view - always visible */}
       <div
@@ -50,27 +50,29 @@ export function NetKANMobileCard({
             )}
           </div>
 
-          {/* Status line - always visible */}
-          <div className="flex items-start gap-2 text-sm">
-            <div className="flex-1 min-w-0">
-              {hasError && (
-                <div className="error-icon error-text text-xs truncate">
-                  <Highlighted content={entry.last_error} search={filterId} />
-                </div>
-              )}
-              {hasWarning && (
-                <div className="warning-icon warning-text text-xs truncate">
-                  <Highlighted content={entry.last_warnings} search={filterId} />
-                </div>
-              )}
-              {!hasError && !hasWarning && (
-                <span className="text-muted-foreground text-xs">No errors</span>
-              )}
+          {/* Status line - visible only when collapsed */}
+          {!isExpanded && (
+            <div className="flex items-start gap-2 text-sm">
+              <div className="flex-1 min-w-0">
+                {hasError && (
+                  <div className="error-icon error-text text-xs truncate">
+                    <Highlighted content={entry.last_error} search={filterId} />
+                  </div>
+                )}
+                {hasWarning && (
+                  <div className="warning-icon warning-text text-xs truncate">
+                    <Highlighted content={entry.last_warnings} search={filterId} />
+                  </div>
+                )}
+                {!hasError && !hasWarning && (
+                  <span className="text-muted-foreground text-xs">No errors</span>
+                )}
+              </div>
+              <span className="text-muted-foreground text-xs whitespace-nowrap flex-shrink-0">
+                {formatRelativeDate(entry.last_indexed)}
+              </span>
             </div>
-            <span className="text-muted-foreground text-xs whitespace-nowrap flex-shrink-0">
-              {formatRelativeDate(entry.last_indexed)}
-            </span>
-          </div>
+          )}
         </div>
       </div>
 
