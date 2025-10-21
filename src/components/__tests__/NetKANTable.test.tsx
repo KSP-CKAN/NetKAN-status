@@ -220,6 +220,49 @@ describe('NetKANTable', () => {
     });
   });
 
+  describe('Desktop Font Size Improvements', () => {
+    it('should render desktop table headers with text-sm class', () => {
+      render(<NetKANTable {...defaultProps} />);
+
+      // Desktop table should exist
+      const desktopTable = document.querySelector('.hidden.sm\\:block');
+      expect(desktopTable).toBeInTheDocument();
+
+      // All desktop headers should have text-sm class
+      const headers = desktopTable?.querySelectorAll('.cursor-pointer');
+      expect(headers?.length).toBeGreaterThan(0);
+
+      headers?.forEach((header) => {
+        expect(header).toHaveClass('text-sm');
+      });
+    });
+
+    it('should render desktop table cell content with text-sm class', () => {
+      render(<NetKANTable {...defaultProps} />);
+
+      // Desktop table should exist
+      const desktopTable = document.querySelector('.hidden.sm\\:block');
+      expect(desktopTable).toBeInTheDocument();
+
+      // Find table cells (excluding headers)
+      const tableCells = desktopTable?.querySelectorAll('.p-4.align-middle');
+      expect(tableCells?.length).toBeGreaterThan(0);
+
+      tableCells?.forEach((cell) => {
+        expect(cell).toHaveClass('text-sm');
+      });
+    });
+
+    it('should preserve existing text-xs classes for module menu links', () => {
+      render(<NetKANTable {...defaultProps} />);
+
+      // Module menu should still have text-xs
+      const moduleMenu = document.querySelector('.module-menu.text-xs');
+      expect(moduleMenu).toBeInTheDocument();
+      expect(moduleMenu).toHaveClass('text-xs');
+    });
+  });
+
   describe('Integration with existing functionality', () => {
     it('should not affect desktop table view', () => {
       render(<NetKANTable {...defaultProps} />);

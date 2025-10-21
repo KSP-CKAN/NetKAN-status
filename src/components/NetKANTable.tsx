@@ -70,31 +70,31 @@ export function NetKANTable({
             style={{ gridTemplateColumns: '16rem 8rem 8rem 8rem 1fr' }}
           >
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('id')}
             >
               NetKAN {sortIcon('id')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_inflated')}
             >
               Last Inflated {sortIcon('last_inflated')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_downloaded')}
             >
               Last Downloaded {sortIcon('last_downloaded')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_indexed')}
             >
               Last Indexed {sortIcon('last_indexed')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_error')}
             >
               <span className="error-text">{errorCount} Errors</span> /{' '}
@@ -131,7 +131,7 @@ export function NetKANTable({
                   }}
                 >
                   {/* NetKAN Column */}
-                  <div className="p-4 align-middle break-words overflow-wrap-anywhere">
+                  <div className="p-4 align-middle break-words overflow-wrap-anywhere text-sm">
                     <a
                       href={game.netkan(row.id, row.frozen)}
                       target="_blank"
@@ -185,22 +185,22 @@ export function NetKANTable({
                   </div>
 
                   {/* Last Inflated Column */}
-                  <div className="p-4 align-middle" title={row.last_inflated || ''}>
+                  <div className="p-4 align-middle text-sm" title={row.last_inflated || ''}>
                     {formatRelativeDate(row.last_inflated)}
                   </div>
 
                   {/* Last Downloaded Column */}
-                  <div className="p-4 align-middle" title={row.last_downloaded || ''}>
+                  <div className="p-4 align-middle text-sm" title={row.last_downloaded || ''}>
                     {formatRelativeDate(row.last_downloaded)}
                   </div>
 
                   {/* Last Indexed Column */}
-                  <div className="p-4 align-middle" title={row.last_indexed || ''}>
+                  <div className="p-4 align-middle text-sm" title={row.last_indexed || ''}>
                     {formatRelativeDate(row.last_indexed)}
                   </div>
 
                   {/* Error/Warning Column */}
-                  <div className="p-4 align-middle break-words">
+                  <div className="p-4 align-middle break-words text-sm">
                     {row.last_error && (
                       <div className="error-icon error-text whitespace-normal break-words">
                         <Highlighted
