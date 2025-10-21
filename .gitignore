@@ -4,3 +4,15 @@ node_modules
 npm-debug.log
 *.swp
 *.lock
+public/status/
+
+# Testing
+coverage
+
+# Misc
+.DS_Store
+*.local
+
+# Environment
+.env
+.env.local
