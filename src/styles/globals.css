@@ -118,22 +118,23 @@
 
 .mobile-card-details {
   @apply px-4 pb-4 pt-2 border-t;
-  animation: slideDown 0.2s ease-out;
+  animation: slideDown 0.25s ease-out;
+  scroll-margin-top: 1rem;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    max-height: 0;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    max-height: 500px;
   }
 }
 
 .mobile-card-link {
-  @apply inline-block px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors;
+  @apply inline-block px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors;
   min-height: 44px;
   display: inline-flex;
   align-items: center;

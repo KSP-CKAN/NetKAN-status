@@ -2,9 +2,11 @@ import { useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Highlighted } from '@/components/Highlighted';
 import { NetKANMobileCard } from '@/components/NetKANMobileCard';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { formatRelativeDate } from '@/lib/date';
 import type { NetKANEntry, GameConfig } from '@/types/netkan';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 interface NetKANTableProps {
   data: NetKANEntry[];
@@ -225,6 +227,38 @@ export function NetKANTable({
 
       {/* Mobile card view - shown only on mobile */}
       <div ref={mobileParentRef} className="sm:hidden h-full overflow-auto">
+        {/* Mobile sort controls */}
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <Select
+            value={sortBy || ''}
+            onChange={(e) => onSort(e.target.value)}
+            className="flex-1 h-9 text-sm"
+          >
+            <option value="" disabled>Sort by...</option>
+            <option value="id">ID</option>
+            <option value="last_inflated">Last Inflated</option>
+            <option value="last_downloaded">Last Downloaded</option>
+            <option value="last_indexed">Last Indexed</option>
+            <option value="last_error">Errors/Warnings</option>
+          </Select>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => sortBy && onSort(sortBy)}
+            className="h-9 w-9 p-0"
+            disabled={!sortBy}
+            title={!sortBy ? 'Select a column to sort' : sortDir === 'ASC' ? 'Sort descending' : 'Sort ascending'}
+          >
+            {!sortBy ? (
+              <ArrowUpDown className="h-4 w-4" />
+            ) : sortDir === 'ASC' ? (
+              <ArrowUp className="h-4 w-4" />
+            ) : (
+              <ArrowDown className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
         <div className="mobile-card-summary">
           <span className="error-text font-medium">{errorCount} Errors</span>
           <span className="text-muted-foreground mx-2">/</span>
