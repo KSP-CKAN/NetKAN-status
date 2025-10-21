@@ -46,7 +46,6 @@ export function FilterControls({
       <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
         {games
           .slice()
-          .reverse()
           .map((game) => (
             <div key={game.id} className="flex items-center space-x-2">
               <Checkbox
