@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { FilterControls } from '../FilterControls';
 import type { GameConfig, FilterCounts } from '@/types/netkan';
 
@@ -81,7 +81,7 @@ describe('FilterControls', () => {
     render(<FilterControls {...defaultProps} />);
     const input = screen.getByPlaceholderText('filter...');
     expect(input).toBeInTheDocument();
-    expect(input).toHaveAttribute('type', 'search');
+    expect(input).toHaveAttribute('type', 'text');
   });
 
   it('should handle zero counts', () => {
@@ -96,5 +96,72 @@ describe('FilterControls', () => {
     render(<FilterControls {...defaultProps} counts={zeroCounts} />);
     expect(screen.getByText(/^0 KSP$/)).toBeInTheDocument();
     expect(screen.getByText(/^0 active$/)).toBeInTheDocument();
+  });
+
+  it('should not show clear button initially', () => {
+    render(<FilterControls {...defaultProps} />);
+    const clearButton = screen.queryByRole('button', { name: /clear search/i });
+    expect(clearButton).not.toBeInTheDocument();
+  });
+
+  it('should show clear button when text is entered', () => {
+    render(<FilterControls {...defaultProps} />);
+    const input = screen.getByPlaceholderText('filter...') as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    const clearButton = screen.getByRole('button', { name: /clear search/i });
+    expect(clearButton).toBeInTheDocument();
+  });
+
+  it('should clear input when clear button is clicked', () => {
+    render(<FilterControls {...defaultProps} />);
+    const input = screen.getByPlaceholderText('filter...') as HTMLInputElement;
+
+    // Enter text to show clear button
+    fireEvent.change(input, { target: { value: 'test' } });
+    expect(input.value).toBe('test');
+
+    // Click clear button
+    const clearButton = screen.getByRole('button', { name: /clear search/i });
+    fireEvent.click(clearButton);
+
+    // Input should be cleared
+    expect(input.value).toBe('');
+  });
+
+  it('should call onFilterChange with empty string when clear button is clicked', () => {
+    const onFilterChange = vi.fn();
+    render(<FilterControls {...defaultProps} onFilterChange={onFilterChange} />);
+    const input = screen.getByPlaceholderText('filter...') as HTMLInputElement;
+
+    // Enter text
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    // Click clear button
+    const clearButton = screen.getByRole('button', { name: /clear search/i });
+    fireEvent.click(clearButton);
+
+    // Should call onFilterChange with empty string
+    expect(onFilterChange).toHaveBeenCalledWith('');
+  });
+
+  it('should hide clear button after clearing', () => {
+    render(<FilterControls {...defaultProps} />);
+    const input = screen.getByPlaceholderText('filter...') as HTMLInputElement;
+
+    // Enter text
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    // Clear button should be visible
+    let clearButton = screen.getByRole('button', { name: /clear search/i });
+    expect(clearButton).toBeInTheDocument();
+
+    // Click clear button
+    fireEvent.click(clearButton);
+
+    // Clear button should be hidden
+    clearButton = screen.queryByRole('button', { name: /clear search/i }) as HTMLButtonElement;
+    expect(clearButton).not.toBeInTheDocument();
   });
 });
