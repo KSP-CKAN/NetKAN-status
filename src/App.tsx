@@ -59,7 +59,7 @@ function App() {
         <div className="flex items-center justify-between mb-3 sm:mb-4 flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-4">
             <img src="/favicon.ico" alt="" className="w-12 h-12 sm:w-16 sm:h-16" />
-            <h1 className="text-xl sm:text-2xl font-semibold">NetKANs Indexed</h1>
+            <h1 className="text-lg sm:text-xl font-semibold">NetKANs Indexed</h1>
           </div>
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>

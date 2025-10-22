@@ -2,9 +2,11 @@ import { useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Highlighted } from '@/components/Highlighted';
 import { NetKANMobileCard } from '@/components/NetKANMobileCard';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { formatRelativeDate } from '@/lib/date';
 import type { NetKANEntry, GameConfig } from '@/types/netkan';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 interface NetKANTableProps {
   data: NetKANEntry[];
@@ -42,7 +44,7 @@ export function NetKANTable({
   const desktopVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => desktopParentRef.current,
-    estimateSize: () => 80,
+    estimateSize: () => 60,
     overscan: 5,
     measureElement: (el) => el.getBoundingClientRect().height,
   });
@@ -68,31 +70,31 @@ export function NetKANTable({
             style={{ gridTemplateColumns: '16rem 8rem 8rem 8rem 1fr' }}
           >
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('id')}
             >
               NetKAN {sortIcon('id')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_inflated')}
             >
               Last Inflated {sortIcon('last_inflated')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_downloaded')}
             >
               Last Downloaded {sortIcon('last_downloaded')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_indexed')}
             >
               Last Indexed {sortIcon('last_indexed')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_error')}
             >
               <span className="error-text">{errorCount} Errors</span> /{' '}
@@ -116,7 +118,7 @@ export function NetKANTable({
                   key={`${row.game_id}-${row.id}`}
                   data-index={virtualRow.index}
                   ref={desktopVirtualizer.measureElement}
-                  className={`grid table-row border-b min-h-[80px] transition-colors hover:bg-muted/50 ${
+                  className={`grid table-row border-b min-h-[60px] transition-colors hover:bg-muted/50 ${
                     virtualRow.index % 2 === 1 ? 'bg-muted' : 'bg-background'
                   }`}
                   style={{
@@ -129,7 +131,7 @@ export function NetKANTable({
                   }}
                 >
                   {/* NetKAN Column */}
-                  <div className="p-4 align-middle break-words overflow-wrap-anywhere">
+                  <div className="py-2 px-3 align-middle break-words overflow-wrap-anywhere text-sm">
                     <a
                       href={game.netkan(row.id, row.frozen)}
                       target="_blank"
@@ -183,22 +185,22 @@ export function NetKANTable({
                   </div>
 
                   {/* Last Inflated Column */}
-                  <div className="p-4 align-middle" title={row.last_inflated || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_inflated || ''}>
                     {formatRelativeDate(row.last_inflated)}
                   </div>
 
                   {/* Last Downloaded Column */}
-                  <div className="p-4 align-middle" title={row.last_downloaded || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_downloaded || ''}>
                     {formatRelativeDate(row.last_downloaded)}
                   </div>
 
                   {/* Last Indexed Column */}
-                  <div className="p-4 align-middle" title={row.last_indexed || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_indexed || ''}>
                     {formatRelativeDate(row.last_indexed)}
                   </div>
 
                   {/* Error/Warning Column */}
-                  <div className="p-4 align-middle break-words">
+                  <div className="py-2 px-3 align-middle break-words text-sm">
                     {row.last_error && (
                       <div className="error-icon error-text whitespace-normal break-words">
                         <Highlighted
@@ -225,6 +227,38 @@ export function NetKANTable({
 
       {/* Mobile card view - shown only on mobile */}
       <div ref={mobileParentRef} className="sm:hidden h-full overflow-auto">
+        {/* Mobile sort controls */}
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <Select
+            value={sortBy || undefined}
+            onChange={(e) => onSort(e.target.value)}
+            className="flex-1 h-9 text-sm"
+          >
+            <option value="">Sort by...</option>
+            <option value="id">ID</option>
+            <option value="last_inflated">Last Inflated</option>
+            <option value="last_downloaded">Last Downloaded</option>
+            <option value="last_indexed">Last Indexed</option>
+            <option value="last_error">Errors/Warnings</option>
+          </Select>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => sortBy && onSort(sortBy)}
+            className="h-9 w-9 p-0"
+            disabled={!sortBy}
+            title={!sortBy ? 'Select a column to sort' : sortDir === 'ASC' ? 'Sort descending' : 'Sort ascending'}
+          >
+            {!sortBy ? (
+              <ArrowUpDown className="h-4 w-4" />
+            ) : sortDir === 'ASC' ? (
+              <ArrowUp className="h-4 w-4" />
+            ) : (
+              <ArrowDown className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
         <div className="mobile-card-summary">
           <span className="error-text font-medium">{errorCount} Errors</span>
           <span className="text-muted-foreground mx-2">/</span>

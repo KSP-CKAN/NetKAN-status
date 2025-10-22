@@ -58,4 +58,20 @@ describe('App', () => {
     expect(screen.getByText(/NetKANs Indexed/i)).toBeInTheDocument();
     expect(screen.queryByText(/Loading NetKAN data/i)).not.toBeInTheDocument();
   });
+
+  it('should render main heading with reduced font size classes', () => {
+    vi.spyOn(useNetKANDataModule, 'useNetKANData').mockReturnValue({
+      data: [],
+      isLoading: false,
+    });
+    vi.spyOn(useThemeModule, 'useTheme').mockReturnValue({
+      theme: 'light',
+      toggleTheme: vi.fn(),
+    });
+
+    render(<App />);
+
+    const heading = screen.getByRole('heading', { name: /NetKANs Indexed/i });
+    expect(heading).toHaveClass('text-lg', 'sm:text-xl', 'font-semibold');
+  });
 });

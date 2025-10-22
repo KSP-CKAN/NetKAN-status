@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Highlighted } from '@/components/Highlighted';
 import { formatRelativeDate } from '@/lib/date';
 import type { NetKANEntry, GameConfig } from '@/types/netkan';
@@ -18,9 +18,24 @@ export function NetKANMobileCard({
   isEven,
 }: NetKANMobileCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
   const hasError = !!entry.last_error;
   const hasWarning = !entry.last_error && !!entry.last_warnings;
+
+  // Smoothly scroll expanded content into view
+  useEffect(() => {
+    if (isExpanded && detailsRef.current) {
+      // Wait for animation to complete before scrolling
+      setTimeout(() => {
+        detailsRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest',
+        });
+      }, 300); // Wait for animation to complete (250ms + buffer)
+    }
+  }, [isExpanded]);
 
   return (
     <div
@@ -34,11 +49,21 @@ export function NetKANMobileCard({
       <div
         className="mobile-card-header"
         onClick={() => setIsExpanded(!isExpanded)}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${entry.id}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3
-              className="font-medium text-primary truncate"
+              className="text-sm font-medium text-primary truncate"
               style={entry.frozen ? { textDecoration: 'line-through' } : undefined}
             >
               <Highlighted content={entry.id} search={filterId} />
@@ -52,7 +77,7 @@ export function NetKANMobileCard({
 
           {/* Status line - visible only when collapsed */}
           {!isExpanded && (
-            <div className="flex items-start gap-2 text-sm">
+            <div className="flex items-start gap-2 text-xs">
               <div className="flex-1 min-w-0">
                 {hasError && (
                   <div className="error-icon error-text text-xs truncate">
@@ -78,17 +103,17 @@ export function NetKANMobileCard({
 
       {/* Expanded view - shows on tap */}
       {isExpanded && (
-        <div className="mobile-card-details">
+        <div ref={detailsRef} className="mobile-card-details">
           {/* Full error/warning message if truncated */}
           {(hasError || hasWarning) && (
             <div className="mb-3">
               {hasError && (
-                <div className="error-icon error-text text-sm">
+                <div className="error-icon error-text text-xs">
                   <Highlighted content={entry.last_error} search={filterId} />
                 </div>
               )}
               {hasWarning && (
-                <div className="warning-icon warning-text text-sm">
+                <div className="warning-icon warning-text text-xs">
                   <Highlighted content={entry.last_warnings} search={filterId} />
                 </div>
               )}
@@ -96,29 +121,29 @@ export function NetKANMobileCard({
           )}
 
           {/* Dates grid */}
-          <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
+          <div className="grid grid-cols-2 gap-3 mb-3 text-xs">
             <div>
-              <div className="text-muted-foreground text-xs">Last Inflated</div>
-              <div className="font-medium" title={entry.last_inflated || ''}>
+              <div className="text-muted-foreground text-[10px]">Last Inflated</div>
+              <div className="text-xs font-medium" title={entry.last_inflated || ''}>
                 {formatRelativeDate(entry.last_inflated)}
               </div>
             </div>
             <div>
-              <div className="text-muted-foreground text-xs">Last Downloaded</div>
-              <div className="font-medium" title={entry.last_downloaded || ''}>
+              <div className="text-muted-foreground text-[10px]">Last Downloaded</div>
+              <div className="text-xs font-medium" title={entry.last_downloaded || ''}>
                 {formatRelativeDate(entry.last_downloaded)}
               </div>
             </div>
             <div>
-              <div className="text-muted-foreground text-xs">Last Indexed</div>
-              <div className="font-medium" title={entry.last_indexed || ''}>
+              <div className="text-muted-foreground text-[10px]">Last Indexed</div>
+              <div className="text-xs font-medium" title={entry.last_indexed || ''}>
                 {formatRelativeDate(entry.last_indexed)}
               </div>
             </div>
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap gap-2 text-sm">
+          <div className="flex flex-wrap gap-2 text-xs">
             <a
               href={game.netkan(entry.id, entry.frozen)}
               target="_blank"
