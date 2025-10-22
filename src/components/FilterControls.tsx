@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -35,10 +36,15 @@ export function FilterControls({
   onToggleNonmeta,
   onToggleGame,
 }: FilterControlsProps) {
+  const [hasSearchText, setHasSearchText] = useState(false);
+
   const debouncedFilter = debounce(
     (e: React.ChangeEvent<HTMLInputElement>) =>
       e.target.value === '' || e.target.value.length > 3,
-    (e: React.ChangeEvent<HTMLInputElement>) => onFilterChange(e.target.value)
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setHasSearchText(e.target.value.length > 0);
+      onFilterChange(e.target.value);
+    }
   );
 
   return (
@@ -104,13 +110,31 @@ export function FilterControls({
         </div>
       </div>
 
-      <Input
-        type="search"
-        placeholder="filter..."
-        className="w-full sm:w-80"
-        autoFocus
-        onChange={debouncedFilter}
-      />
+      <div className="relative w-full sm:w-80">
+        <Input
+          type="text"
+          placeholder="filter..."
+          className="w-full pr-8"
+          autoFocus
+          onChange={debouncedFilter}
+        />
+        {hasSearchText && (
+          <button
+            onClick={() => {
+              const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+              if (input) {
+                input.value = '';
+                setHasSearchText(false);
+                onFilterChange('');
+              }
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        )}
+      </div>
     </div>
   );
 }

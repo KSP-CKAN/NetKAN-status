@@ -54,8 +54,8 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col p-3 sm:p-5 overflow-hidden">
-      <div className="max-w-[2000px] mx-auto w-full flex-1 flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col sm:p-2 overflow-hidden">
+      <div className="max-w-[2000px] mx-auto w-full flex-1 flex flex-col overflow-hidden p-3">
         <div className="flex items-center justify-between mb-3 sm:mb-4 flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-4">
             <img src="/favicon.ico" alt="" className="w-12 h-12 sm:w-16 sm:h-16" />
