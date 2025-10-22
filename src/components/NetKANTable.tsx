@@ -230,11 +230,11 @@ export function NetKANTable({
         {/* Mobile sort controls */}
         <div className="flex items-center gap-2 mb-3 px-1">
           <Select
-            value={sortBy || ''}
+            value={sortBy || undefined}
             onChange={(e) => onSort(e.target.value)}
             className="flex-1 h-9 text-sm"
           >
-            <option value="" disabled>Sort by...</option>
+            <option value="">Sort by...</option>
             <option value="id">ID</option>
             <option value="last_inflated">Last Inflated</option>
             <option value="last_downloaded">Last Downloaded</option>
