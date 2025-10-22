@@ -237,7 +237,7 @@ describe('NetKANTable', () => {
       });
     });
 
-    it('should render desktop table cell content with text-sm class', () => {
+    it('should render desktop table cell content with text-sm class and compact padding', () => {
       render(<NetKANTable {...defaultProps} />);
 
       // Desktop table should exist
@@ -245,11 +245,13 @@ describe('NetKANTable', () => {
       expect(desktopTable).toBeInTheDocument();
 
       // Find table cells (excluding headers)
-      const tableCells = desktopTable?.querySelectorAll('.p-4.align-middle');
+      const tableCells = desktopTable?.querySelectorAll('.py-2.px-3.align-middle');
       expect(tableCells?.length).toBeGreaterThan(0);
 
       tableCells?.forEach((cell) => {
         expect(cell).toHaveClass('text-sm');
+        expect(cell).toHaveClass('py-2');
+        expect(cell).toHaveClass('px-3');
       });
     });
 

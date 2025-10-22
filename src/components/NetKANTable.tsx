@@ -44,7 +44,7 @@ export function NetKANTable({
   const desktopVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => desktopParentRef.current,
-    estimateSize: () => 80,
+    estimateSize: () => 60,
     overscan: 5,
     measureElement: (el) => el.getBoundingClientRect().height,
   });
@@ -70,31 +70,31 @@ export function NetKANTable({
             style={{ gridTemplateColumns: '16rem 8rem 8rem 8rem 1fr' }}
           >
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('id')}
             >
               NetKAN {sortIcon('id')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_inflated')}
             >
               Last Inflated {sortIcon('last_inflated')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_downloaded')}
             >
               Last Downloaded {sortIcon('last_downloaded')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_indexed')}
             >
               Last Indexed {sortIcon('last_indexed')}
             </div>
             <div
-              className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
+              className="h-10 px-3 text-left align-middle font-medium text-muted-foreground cursor-pointer flex items-center text-sm"
               onClick={() => onSort('last_error')}
             >
               <span className="error-text">{errorCount} Errors</span> /{' '}
@@ -118,7 +118,7 @@ export function NetKANTable({
                   key={`${row.game_id}-${row.id}`}
                   data-index={virtualRow.index}
                   ref={desktopVirtualizer.measureElement}
-                  className={`grid table-row border-b min-h-[80px] transition-colors hover:bg-muted/50 ${
+                  className={`grid table-row border-b min-h-[60px] transition-colors hover:bg-muted/50 ${
                     virtualRow.index % 2 === 1 ? 'bg-muted' : 'bg-background'
                   }`}
                   style={{
@@ -131,7 +131,7 @@ export function NetKANTable({
                   }}
                 >
                   {/* NetKAN Column */}
-                  <div className="p-4 align-middle break-words overflow-wrap-anywhere text-sm">
+                  <div className="py-2 px-3 align-middle break-words overflow-wrap-anywhere text-sm">
                     <a
                       href={game.netkan(row.id, row.frozen)}
                       target="_blank"
@@ -185,22 +185,22 @@ export function NetKANTable({
                   </div>
 
                   {/* Last Inflated Column */}
-                  <div className="p-4 align-middle text-sm" title={row.last_inflated || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_inflated || ''}>
                     {formatRelativeDate(row.last_inflated)}
                   </div>
 
                   {/* Last Downloaded Column */}
-                  <div className="p-4 align-middle text-sm" title={row.last_downloaded || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_downloaded || ''}>
                     {formatRelativeDate(row.last_downloaded)}
                   </div>
 
                   {/* Last Indexed Column */}
-                  <div className="p-4 align-middle text-sm" title={row.last_indexed || ''}>
+                  <div className="py-2 px-3 align-middle text-sm" title={row.last_indexed || ''}>
                     {formatRelativeDate(row.last_indexed)}
                   </div>
 
                   {/* Error/Warning Column */}
-                  <div className="p-4 align-middle break-words text-sm">
+                  <div className="py-2 px-3 align-middle break-words text-sm">
                     {row.last_error && (
                       <div className="error-icon error-text whitespace-normal break-words">
                         <Highlighted
