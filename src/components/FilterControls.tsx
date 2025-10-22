@@ -114,7 +114,7 @@ export function FilterControls({
         <Input
           type="text"
           placeholder="filter..."
-          className="w-full pr-8 focus-visible:ring-0 focus-visible:border-ring"
+          className="w-full pr-8"
           autoFocus
           onChange={debouncedFilter}
         />
