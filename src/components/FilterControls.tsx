@@ -123,6 +123,7 @@ export function FilterControls({
             onClick={() => {
               const input = document.querySelector('input[type="text"]') as HTMLInputElement;
               if (input) {
+                input.focus();
                 input.value = '';
                 setHasSearchText(false);
                 onFilterChange('');
