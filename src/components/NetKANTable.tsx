@@ -146,7 +146,7 @@ export function NetKANTable({
                         search={filterId}
                       />
                     </a>
-                    <div className="module-menu text-xs text-muted-foreground mt-1 break-words">
+                    <div className="module-menu text-xs text-muted-foreground break-words -mb-1">
                       <a
                         href={game.history(row.id, row.frozen)}
                         target="_blank"
