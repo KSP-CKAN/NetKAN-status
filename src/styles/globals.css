@@ -92,12 +92,12 @@
 
 /* Module menu hover effect */
 .module-menu {
-  @apply opacity-0 transition-opacity duration-300 ease-in-out -mt-4;
+  @apply opacity-0 transition-opacity duration-300 ease-in-out;
   visibility: hidden;
 }
 
 .table-row:hover .module-menu {
-  @apply opacity-100 mt-0;
+  @apply opacity-100;
   visibility: visible;
 }
 
