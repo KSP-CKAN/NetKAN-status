@@ -118,7 +118,7 @@ export function NetKANTable({
                   key={`${row.game_id}-${row.id}`}
                   data-index={virtualRow.index}
                   ref={desktopVirtualizer.measureElement}
-                  className={`grid table-row border-b min-h-[60px] transition-colors hover:bg-muted/50 ${
+                  className={`grid netkan-row border-b min-h-[60px] transition-colors hover:bg-muted/50 ${
                     virtualRow.index % 2 === 1 ? 'bg-muted' : 'bg-background'
                   }`}
                   style={{
@@ -131,7 +131,7 @@ export function NetKANTable({
                   }}
                 >
                   {/* NetKAN Column */}
-                  <div className="py-2 px-3 align-middle break-words overflow-wrap-anywhere text-sm">
+                  <div className="py-2 px-3 align-middle wrap-break-word overflow-wrap-anywhere text-sm">
                     <a
                       href={game.netkan(row.id, row.frozen)}
                       target="_blank"
@@ -146,7 +146,7 @@ export function NetKANTable({
                         search={filterId}
                       />
                     </a>
-                    <div className="module-menu text-xs text-muted-foreground break-words -mb-1">
+                    <div className="module-menu text-xs text-muted-foreground wrap-break-word -mb-1">
                       <a
                         href={game.history(row.id, row.frozen)}
                         target="_blank"
@@ -169,7 +169,7 @@ export function NetKANTable({
                           .filter(([key]) => !key.startsWith('x_'))
                           .sort(([a], [b]) => a.localeCompare(b))
                           .map(([key, url]) => (
-                            <span key={key} className="break-words">
+                            <span key={key} className="wrap-break-word">
                               {' | '}
                               <a
                                 href={url}
@@ -200,9 +200,9 @@ export function NetKANTable({
                   </div>
 
                   {/* Error/Warning Column */}
-                  <div className="py-2 px-3 align-middle break-words text-sm">
+                  <div className="py-2 px-3 align-middle wrap-break-word text-sm">
                     {row.last_error && (
-                      <div className="error-icon error-text whitespace-normal break-words">
+                      <div className="error-icon error-text whitespace-normal wrap-break-word">
                         <Highlighted
                           content={row.last_error}
                           search={filterId}
@@ -210,7 +210,7 @@ export function NetKANTable({
                       </div>
                     )}
                     {!row.last_error && row.last_warnings && (
-                      <div className="warning-icon warning-text whitespace-normal break-words">
+                      <div className="warning-icon warning-text whitespace-normal wrap-break-word">
                         <Highlighted
                           content={row.last_warnings}
                           search={filterId}
