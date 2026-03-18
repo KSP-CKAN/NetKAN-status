@@ -69,9 +69,9 @@ export function NetKANMobileCard({
               <Highlighted content={entry.id} search={filterId} />
             </h3>
             {isExpanded ? (
-              <ChevronUp className="flex-shrink-0 h-5 w-5 text-muted-foreground" />
+              <ChevronUp className="shrink-0 h-5 w-5 text-muted-foreground" />
             ) : (
-              <ChevronDown className="flex-shrink-0 h-5 w-5 text-muted-foreground" />
+              <ChevronDown className="shrink-0 h-5 w-5 text-muted-foreground" />
             )}
           </div>
 
@@ -93,7 +93,7 @@ export function NetKANMobileCard({
                   <span className="text-muted-foreground text-xs">No errors</span>
                 )}
               </div>
-              <span className="text-muted-foreground text-xs whitespace-nowrap flex-shrink-0">
+              <span className="text-muted-foreground text-xs whitespace-nowrap shrink-0">
                 {formatRelativeDate(entry.last_indexed)}
               </span>
             </div>
