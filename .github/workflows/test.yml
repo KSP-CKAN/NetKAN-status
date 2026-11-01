@@ -13,18 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
+      - uses: pnpm/setup@v3
         with:
-          run_install: false
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: '.nvmrc'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version-file: .nvmrc
 
       - name: Run tests
         run: pnpm test
